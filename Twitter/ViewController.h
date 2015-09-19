@@ -10,6 +10,7 @@
 
 @interface ViewController : UIViewController
 
+- (void)backFromAuthentication:(NSString *)authVerifier;
 
 @end
 
