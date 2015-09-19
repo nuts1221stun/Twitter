@@ -96,8 +96,6 @@
     NSURLRequest *request = [self generateAuthorizedRequest:ACCOUNT_CREDENTIAL_URL];
     
     [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
-        //NSString *str = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-        //NSLog(@"user json: %@", str);
         completionHandler(data);
     }];
 }
@@ -116,7 +114,7 @@
 
 
 - (NSString *)getAuthenticateUrl {
-    NSString *callbackUrl = CALLBACK_URL;//@"mobiletwitter%3A%2F%2F";
+    NSString *callbackUrl = CALLBACK_URL;
     NSString *authenticateUrl = [NSString stringWithFormat:@"%@?oauth_token=%@&oauth_callback=%@", AUTHENTICATE_URL, self.authToken, callbackUrl];
     return authenticateUrl;
 }
@@ -126,9 +124,6 @@
     NSString *accessTokenUrl = [NSString stringWithFormat:@"%@?oauth_token=%@&oauth_verifier=%@", ACCESS_TOKEN_URL, self.authToken, self.authVerifier];
     
     NSMutableURLRequest* request = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:accessTokenUrl]];
-    //NSString *requestTokenHeader;
-    //requestTokenHeader = [self generateRequestHeader];
-    //[request setValue:requestTokenHeader forHTTPHeaderField:@"Authorization"];
     
     [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
         NSString *str = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
@@ -191,13 +186,6 @@
          [self parseAuthTokenAndTokenSecretFromString:str];
          completionHandler();
      }];
-    /*
-    NSURLResponse *response;
-    NSError *error;
-    NSData * data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
-    NSString *str = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-    
-    [self parseAuthTokenAndTokenSecretFromString:str];*/
 }
 
 - (void)parseAuthTokenAndTokenSecretFromString:(NSString *)string {
