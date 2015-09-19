@@ -7,6 +7,7 @@
 //
 
 #import "TwitterClient.h"
+#import "User.h"
 #include <CommonCrypto/CommonDigest.h>
 #include <CommonCrypto/CommonHMAC.h>
 #include "Base64Transcoder.h"
@@ -23,6 +24,9 @@
 #define OAUTH_NONCE @"42a8aa0025e89a65672aa077359365b1"
 #define OAUTH_SIGNATURE_METHOD @"HMAC-SHA1"
 #define OAUTH_VERSION @"1.0"
+
+NSString * const UserDidLoginNotification = @"UserDidLoginNotification";
+NSString * const UserDidLogoutNotification = @"UserDidLogoutNotification";
 
 @implementation NSString (NSString_Extended)
 - (NSString *)urlencode {
@@ -63,12 +67,18 @@
     return instance;
 }
 
-- (void)login:(void (^)(NSData *userRawData))completionHandler {
+- (void)login:(void (^)(User *user))completionHandler {
     self.loginCompletionHandler = completionHandler;
     [self requestAuthToken:^{
         NSString *authenticateUrl = [self getAuthenticateUrl];
         [[UIApplication sharedApplication] openURL:[NSURL URLWithString:authenticateUrl]];
     }];
+}
+
+- (void)logout {
+    [User setCurrentUser:nil];
+    self.authAccessToken = nil;
+    [[NSNotificationCenter defaultCenter] postNotificationName:UserDidLogoutNotification object:nil];
 }
 
 - (void)openUrl:(NSURL *)url {
@@ -86,17 +96,21 @@
         }
     }
     [self requestAccessToken: authVerifier completionHandler:^{
-        [self getUser:^(NSData *userRawData) {
-            self.loginCompletionHandler(userRawData);
+        [self getUser:^(User *user) {
+            self.loginCompletionHandler(user);
         }];
     }];
 }
 
-- (void)getUser:(void (^)(NSData *userRawData))completionHandler {
+- (void)getUser:(void (^)(User *user))completionHandler {
     NSURLRequest *request = [self generateAuthorizedRequest:ACCOUNT_CREDENTIAL_URL];
     
     [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
-        completionHandler(data);
+        NSDictionary *userDictionary = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
+        //NSLog(@"user json: %@", userDictionary);
+        User *user = [[User alloc] initWithDictionary:userDictionary];
+        [User setCurrentUser:user];
+        completionHandler(user);
     }];
 }
 
@@ -179,13 +193,14 @@
     NSMutableURLRequest* request = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:requestTokenUrl]];
     
     [request setValue:requestTokenHeader forHTTPHeaderField:@"Authorization"];
-    
-     [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
-         NSString *str = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-         NSLog(@"%@", str);
-         [self parseAuthTokenAndTokenSecretFromString:str];
-         completionHandler();
-     }];
+    NSLog(@"request auth token: url=%@", requestTokenUrl);
+    NSLog(@"request auth token: header=%@", requestTokenHeader);
+    [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
+        NSString *str = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+        NSLog(@"request auth token: response=%@", str);
+        [self parseAuthTokenAndTokenSecretFromString:str];
+        completionHandler();
+    }];
 }
 
 - (void)parseAuthTokenAndTokenSecretFromString:(NSString *)string {

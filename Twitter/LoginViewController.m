@@ -8,6 +8,8 @@
 
 #import "LoginViewController.h"
 #import "TwitterClient.h"
+#import "User.h"
+#import "TweetViewController.h"
 
 @interface LoginViewController ()
 @property (weak, nonatomic) IBOutlet UIButton *loginButton;
@@ -26,10 +28,11 @@
     self.twitterClient = [TwitterClient sharedInstance];    
 }
 - (IBAction)onLoginButtonClick:(id)sender {
-    [self.twitterClient login:^(NSData *userRawData) {
-        NSLog(@"we are loggined in!!!!!!!!!!!!");
-        NSString *str = [[NSString alloc] initWithData:userRawData encoding:NSUTF8StringEncoding];
-        NSLog(@"user json: %@", str);
+    [self.twitterClient login:^(User *user) {
+        NSLog(@"login callback: %@", user.name);
+        if (user != nil) {
+            [self presentViewController:[[TweetViewController alloc] init] animated:YES completion:nil];
+        }
     }];
 }
 

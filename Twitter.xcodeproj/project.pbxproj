@@ -145,8 +145,8 @@
 			children = (
 				9B19E9F81BAC56E00025831D /* Base64Transcoder.h */,
 				9B19E9F91BAC57460025831D /* Base64Transcoder.c */,
-				9B19EA1B1BADAEE20025831D /* TwitterClient.m */,
 				9B19EA091BAD8DF50025831D /* TwitterClient.h */,
+				9B19EA1B1BADAEE20025831D /* TwitterClient.m */,
 				9B19EA0D1BAD96790025831D /* User.h */,
 				9B19EA0E1BAD96790025831D /* User.m */,
 				9B19EA101BAD968B0025831D /* Tweet.h */,

@@ -8,11 +8,11 @@
 
 #import "AppDelegate.h"
 #import "LoginViewController.h"
+#import "TweetViewController.h"
 #import "TwitterClient.h"
+#import "User.h"
 
 @interface AppDelegate ()
-
-@property (strong, nonatomic) LoginViewController *loginVC;
 
 @end
 
@@ -23,13 +23,28 @@
     
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     
-    self.window.rootViewController = [[LoginViewController alloc] init];
-    self.loginVC = (LoginViewController *)self.window.rootViewController;
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(userDidLogout) name:UserDidLogoutNotification object:nil];
+    
+    User *user = [User currentUser];
+    if (user != nil) {
+        NSLog(@"======welcome!!!!!! %@", user.name);
+        self.window.rootViewController = [[TweetViewController alloc] init];
+    } else {
+        NSLog(@"=========please login");
+        self.window.rootViewController = [[LoginViewController alloc] init];
+    }
+    
+    
+    
     
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window makeKeyAndVisible];
     
     return YES;
+}
+
+- (void)userDidLogout {
+    self.window.rootViewController = [[LoginViewController alloc] init];
 }
 
 

@@ -8,6 +8,11 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import "User.h"
+
+
+extern NSString * const UserDidLoginNotification;
+extern NSString * const UserDidLogoutNotification;
 
 @interface TwitterClient : NSObject
 
@@ -25,7 +30,8 @@
 
 + (TwitterClient *)sharedInstance;
 
-- (void)login:(void (^)(NSData *userRawData))completionHandler;
+- (void)login:(void (^)(User *user))completionHandler;
+- (void)logout;
 - (void)openUrl:(NSURL *)url;
 
 @end

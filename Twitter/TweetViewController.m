@@ -7,8 +7,12 @@
 //
 
 #import "TweetViewController.h"
+#import "TwitterClient.h"
+#import "User.h"
 
 @interface TweetViewController ()
+
+@property (strong, nonatomic) TwitterClient *twitterClient;
 
 @end
 
@@ -16,9 +20,10 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view from its nib.
+    self.twitterClient = [TwitterClient sharedInstance];
 }
 - (IBAction)onLogoutButtonClick:(id)sender {
+    [self.twitterClient logout];
 }
 
 - (void)didReceiveMemoryWarning {
