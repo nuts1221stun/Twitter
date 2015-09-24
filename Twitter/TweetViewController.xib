@@ -6,6 +6,7 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="TweetViewController">
             <connections>
+                <outlet property="tweetTableView" destination="PBa-uM-Zff" id="eZP-B5-hof"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
         </placeholder>
@@ -14,17 +15,18 @@
             <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="l88-IO-c4q">
-                    <rect key="frame" x="137" y="124" width="49" height="30"/>
-                    <state key="normal" title="Logout">
-                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                    </state>
-                    <connections>
-                        <action selector="onLogoutButtonClick:" destination="-1" eventType="touchUpInside" id="avu-lm-OwK"/>
-                    </connections>
-                </button>
+                <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="146" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="PBa-uM-Zff">
+                    <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                </tableView>
             </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstAttribute="trailing" secondItem="PBa-uM-Zff" secondAttribute="trailing" id="89h-us-gN9"/>
+                <constraint firstItem="PBa-uM-Zff" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="CzR-Uj-Ioh"/>
+                <constraint firstItem="PBa-uM-Zff" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" id="i6K-nm-a1c"/>
+                <constraint firstAttribute="bottom" secondItem="PBa-uM-Zff" secondAttribute="bottom" id="s07-NI-J3e"/>
+            </constraints>
             <point key="canvasLocation" x="343" y="289"/>
         </view>
     </objects>

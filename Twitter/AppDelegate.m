@@ -26,16 +26,15 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(userDidLogout) name:UserDidLogoutNotification object:nil];
     
     User *user = [User currentUser];
+    
     if (user != nil) {
-        NSLog(@"======welcome!!!!!! %@", user.name);
-        self.window.rootViewController = [[TweetViewController alloc] init];
+        self.tweetViewController = [[TweetViewController alloc] init];
+        self.navigationController = [[UINavigationController alloc] initWithRootViewController:self.tweetViewController];
+        self.window.rootViewController = self.navigationController;
     } else {
-        NSLog(@"=========please login");
-        self.window.rootViewController = [[LoginViewController alloc] init];
+        self.loginViewController = [[LoginViewController alloc] init];
+        self.window.rootViewController = self.loginViewController;
     }
-    
-    
-    
     
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window makeKeyAndVisible];

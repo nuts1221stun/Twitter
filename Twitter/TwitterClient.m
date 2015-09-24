@@ -8,6 +8,7 @@
 
 #import "TwitterClient.h"
 #import "User.h"
+#import "Tweet.h"
 #include <CommonCrypto/CommonDigest.h>
 #include <CommonCrypto/CommonHMAC.h>
 #include "Base64Transcoder.h"
@@ -27,6 +28,9 @@
 
 NSString * const UserDidLoginNotification = @"UserDidLoginNotification";
 NSString * const UserDidLogoutNotification = @"UserDidLogoutNotification";
+NSString * const kAccessTokenDictionary = @"kAccessTokenDictionary";
+NSString * const kAccessToken = @"kAccessToken";
+NSString * const kAccessTokenSecret = @"kAccessTokenSecret";
 
 @implementation NSString (NSString_Extended)
 - (NSString *)urlencode {
@@ -77,7 +81,7 @@ NSString * const UserDidLogoutNotification = @"UserDidLogoutNotification";
 
 - (void)logout {
     [User setCurrentUser:nil];
-    self.authAccessToken = nil;
+    [self removeAccessToken];
     [[NSNotificationCenter defaultCenter] postNotificationName:UserDidLogoutNotification object:nil];
 }
 
@@ -107,19 +111,30 @@ NSString * const UserDidLogoutNotification = @"UserDidLogoutNotification";
     
     [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
         NSDictionary *userDictionary = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
-        //NSLog(@"user json: %@", userDictionary);
         User *user = [[User alloc] initWithDictionary:userDictionary];
         [User setCurrentUser:user];
         completionHandler(user);
     }];
 }
 
-- (void)getHomeTimeline {
+- (void)getHomeTimeline:(void (^)(NSArray *tweets))completionHandler {
     NSURLRequest *request = [self generateAuthorizedRequest:HOME_TIMELINE_URL];
     
     [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
-        NSString *str = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-        NSLog(@"timeline json: %@", str);
+
+        NSArray *tweetJsons = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
+        
+        NSMutableArray *tweets = [[NSMutableArray alloc] init];
+        for (NSDictionary *tweetJson in tweetJsons) {
+            Tweet *tweet = [[Tweet alloc] initWithDictionary:tweetJson];
+            [tweets addObject:tweet];
+            //NSLog(@"%@", tweetJson);
+        }
+        
+        completionHandler(tweets);
+
+        //completionHandler(nil);
+
     }];
 }
 
@@ -162,9 +177,35 @@ NSString * const UserDidLogoutNotification = @"UserDidLogoutNotification";
             }
         }
         
-        //[self getHomeTimeline];
+        NSMutableDictionary *accessTokenDictionary = [[NSMutableDictionary alloc] init];
+        [accessTokenDictionary setObject:self.authAccessToken forKey:kAccessToken];
+        [accessTokenDictionary setObject:self.authAccessTokenSecret forKey:kAccessTokenSecret];
+        [self storeAccessToken:accessTokenDictionary];
+        
         completionHandler();
     }];
+}
+
+- (void)storeAccessToken:(NSDictionary *)accessTokenDictionary {
+    NSData *data = [NSJSONSerialization dataWithJSONObject:accessTokenDictionary options:0 error:NULL];
+    [[NSUserDefaults standardUserDefaults] setObject:data forKey:kAccessTokenDictionary];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
+- (NSDictionary *)readAccessToken {
+    NSData *data = [[NSUserDefaults standardUserDefaults] objectForKey:kAccessTokenDictionary];
+    if (data != nil) {
+        NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:data options:0 error:NULL];
+        if ([dictionary objectForKey:kAccessToken] != nil && [dictionary objectForKey:kAccessTokenSecret] != nil) {
+            return dictionary;
+        }
+    }
+    return nil;
+}
+
+- (void)removeAccessToken {
+    [[NSUserDefaults standardUserDefaults] setObject:nil forKey:kAccessTokenDictionary];
+    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 - (NSURLRequest *)generateAuthorizedRequest:(NSString *)url {
@@ -193,11 +234,11 @@ NSString * const UserDidLogoutNotification = @"UserDidLogoutNotification";
     NSMutableURLRequest* request = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:requestTokenUrl]];
     
     [request setValue:requestTokenHeader forHTTPHeaderField:@"Authorization"];
-    NSLog(@"request auth token: url=%@", requestTokenUrl);
-    NSLog(@"request auth token: header=%@", requestTokenHeader);
+    //NSLog(@"request auth token: url=%@", requestTokenUrl);
+    //NSLog(@"request auth token: header=%@", requestTokenHeader);
     [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
         NSString *str = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-        NSLog(@"request auth token: response=%@", str);
+        //NSLog(@"request auth token: response=%@", str);
         [self parseAuthTokenAndTokenSecretFromString:str];
         completionHandler();
     }];
@@ -261,7 +302,12 @@ NSString * const UserDidLogoutNotification = @"UserDidLogoutNotification";
     [self.authDataName addObject:@"oauth_timestamp"];
     [self.authData addObject:[NSString stringWithFormat:@"%ld", (long)[[NSDate date] timeIntervalSince1970]]];
     
-    if (shouldAddToken && self.authAccessToken) {
+    if (shouldAddToken) {
+        if (self.authAccessToken == nil) {
+            NSDictionary *accessTokenDictionary = [self readAccessToken];
+            self.authAccessToken = [accessTokenDictionary objectForKey:kAccessToken];
+            self.authAccessTokenSecret = [accessTokenDictionary objectForKey:kAccessTokenSecret];
+        }
         [self.authDataName addObject:@"oauth_token"];
         [self.authData addObject:self.authAccessToken];
     }

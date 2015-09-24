@@ -14,6 +14,7 @@
 @property (strong, nonatomic) NSString *userId;
 @property (strong, nonatomic) NSString *name;
 @property (strong, nonatomic) NSString *screenName;
+@property (strong, nonatomic) NSString *profileImageUrl;
 
 - (id) initWithDictionary:(NSDictionary *)dictionary;
 

@@ -10,4 +10,13 @@
 
 @implementation Tweet
 
+- (id) initWithDictionary:(NSDictionary *)dictionary {
+    self.createdAt = dictionary[@"created_at"];
+    self.user = [[User alloc] initWithDictionary:dictionary[@"user"]];
+    self.text = dictionary[@"text"];
+    self.retweetCount = [dictionary[@"retweet_count"] integerValue];
+    self.favoriteCount = [dictionary[@"favorite_count"] integerValue];
+    return self;
+}
+
 @end
