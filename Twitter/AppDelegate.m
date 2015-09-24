@@ -24,16 +24,14 @@
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(userDidLogout) name:UserDidLogoutNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(userDidLogin) name:UserDidLoginNotification object:nil];
     
     User *user = [User currentUser];
     
     if (user != nil) {
-        self.tweetViewController = [[TweetViewController alloc] init];
-        self.navigationController = [[UINavigationController alloc] initWithRootViewController:self.tweetViewController];
-        self.window.rootViewController = self.navigationController;
+        [self useTweetViewController];
     } else {
-        self.loginViewController = [[LoginViewController alloc] init];
-        self.window.rootViewController = self.loginViewController;
+        [self useLoginViewController];
     }
     
     self.window.backgroundColor = [UIColor whiteColor];
@@ -43,7 +41,22 @@
 }
 
 - (void)userDidLogout {
-    self.window.rootViewController = [[LoginViewController alloc] init];
+    [self useLoginViewController];
+}
+
+- (void)userDidLogin {
+    [self useTweetViewController];
+}
+
+- (void)useLoginViewController {
+    self.loginViewController = [[LoginViewController alloc] init];
+    self.window.rootViewController = self.loginViewController;
+}
+
+- (void)useTweetViewController {
+    self.tweetViewController = [[TweetViewController alloc] init];
+    self.navigationController = [[UINavigationController alloc] initWithRootViewController:self.tweetViewController];
+    self.window.rootViewController = self.navigationController;
 }
 
 

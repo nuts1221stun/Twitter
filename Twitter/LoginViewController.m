@@ -29,9 +29,9 @@
 }
 - (IBAction)onLoginButtonClick:(id)sender {
     [self.twitterClient login:^(User *user) {
-        NSLog(@"login callback: %@", user.name);
         if (user != nil) {
-            [self presentViewController:[[TweetViewController alloc] init] animated:YES completion:nil];
+            NSLog(@"%@ has logged in", user.name);
+            //[self presentViewController:[[TweetViewController alloc] init] animated:YES completion:nil];
         }
     }];
 }

@@ -101,13 +101,16 @@ NSString * const kAccessTokenSecret = @"kAccessTokenSecret";
     }
     [self requestAccessToken: authVerifier completionHandler:^{
         [self getUser:^(User *user) {
+            if (user != nil) {
+                [[NSNotificationCenter defaultCenter] postNotificationName:UserDidLoginNotification object:nil];
+            }
             self.loginCompletionHandler(user);
         }];
     }];
 }
 
 - (void)getUser:(void (^)(User *user))completionHandler {
-    NSURLRequest *request = [self generateAuthorizedRequest:ACCOUNT_CREDENTIAL_URL];
+    NSURLRequest *request = [self generateAuthorizedRequest:ACCOUNT_CREDENTIAL_URL withMethod:@"GET"];
     
     [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
         NSDictionary *userDictionary = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
@@ -118,7 +121,7 @@ NSString * const kAccessTokenSecret = @"kAccessTokenSecret";
 }
 
 - (void)getHomeTimeline:(void (^)(NSArray *tweets))completionHandler {
-    NSURLRequest *request = [self generateAuthorizedRequest:HOME_TIMELINE_URL];
+    NSURLRequest *request = [self generateAuthorizedRequest:HOME_TIMELINE_URL withMethod:@"GET"];
     
     [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
 
@@ -208,9 +211,10 @@ NSString * const kAccessTokenSecret = @"kAccessTokenSecret";
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
-- (NSURLRequest *)generateAuthorizedRequest:(NSString *)url {
+- (NSURLRequest *)generateAuthorizedRequest:(NSString *)url withMethod:(NSString *)method {
     NSMutableURLRequest *request;
-    [self initAuthData:url shouldAddCallback:false shouldAddToken:true];
+    NSString *signatureBase = [NSString stringWithFormat:@"%@&%@", method, url];
+    [self initAuthData:signatureBase shouldAddCallback:false shouldAddToken:true];
     
     NSString *header = [self generateRequestHeader];
     
@@ -221,7 +225,8 @@ NSString * const kAccessTokenSecret = @"kAccessTokenSecret";
 }
 
 - (void)requestAuthToken:(void (^)())completionHandler {
-    [self initAuthData:REQUEST_TOKEN_URL shouldAddCallback:true shouldAddToken:false];
+    NSString *signatureBase = [NSString stringWithFormat:@"GET&%@", REQUEST_TOKEN_URL];
+    [self initAuthData:signatureBase shouldAddCallback:true shouldAddToken:false];
     
     NSString *requestTokenHeader;
     requestTokenHeader = [self generateRequestHeader];
@@ -322,7 +327,7 @@ NSString * const kAccessTokenSecret = @"kAccessTokenSecret";
 }
 
 - (NSString *)generateSignature:(NSString *)url {
-    NSString *signatureBase = [NSString stringWithFormat:@"GET&%@", [url stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+    NSString *signatureBase = [NSString stringWithFormat:@"%@", [url stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
     
     for (int i = 0; i < self.authData.count; i++) {
         if ([self.authDataName[i] isEqualToString:@"oauth_signature"]) {
