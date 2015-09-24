@@ -7,8 +7,11 @@
 //
 
 #import "TweetViewController.h"
+#import "TwitterClient.h"
 
 @interface TweetViewController ()
+
+@property (strong, nonatomic) TwitterClient *twitterClient;
 
 @end
 
@@ -21,6 +24,8 @@ NSString * const FAVORITE_LABEL = @"FAVORITE";
     [super viewDidLoad];
     
     self.navigationController.navigationBar.translucent = NO;
+    
+    self.twitterClient = [TwitterClient sharedInstance];
     
     if (self.tweet != nil) {
         self.nameLabel.text = self.tweet.user.name;
@@ -41,7 +46,7 @@ NSString * const FAVORITE_LABEL = @"FAVORITE";
         
         self.favoriteCountLabel.text = [NSString stringWithFormat:@"%ld", self.tweet.favoriteCount];
         if (self.tweet.favoriteCount > 1) {
-            self.favoriteLabel.text = [NSString stringWithFormat:@"%@s", FAVORITE_LABEL];
+            self.favoriteLabel.text = [NSString stringWithFormat:@"%@S", FAVORITE_LABEL];
         } else {
             self.favoriteLabel.text = FAVORITE_LABEL;
         }
@@ -60,6 +65,33 @@ NSString * const FAVORITE_LABEL = @"FAVORITE";
             self.profileImage.image = [UIImage imageWithData:data];
         }];
     }
+}
+- (IBAction)onReplyButtonClick:(id)sender {
+    
+}
+- (IBAction)onRetweetButtonClick:(id)sender {
+    
+}
+- (IBAction)onFavoriteButtonClick:(id)sender {
+    if (self.tweet.favorited) {
+        [self.twitterClient unFavorite:self.tweet.tweetId completionHandler:^{}];
+        [self.favoriteButton setImage:[UIImage imageNamed:@"favorite.png"] forState:UIControlStateNormal];
+        if (self.tweet.favoriteCount > 0) {
+            self.tweet.favoriteCount--;
+        }
+        self.favoriteCountLabel.text = [NSString stringWithFormat:@"%ld", self.tweet.favoriteCount];
+    } else {
+        [self.twitterClient favorite:self.tweet.tweetId completionHandler:^{}];
+        [self.favoriteButton setImage:[UIImage imageNamed:@"favoriteOn.png"] forState:UIControlStateNormal];
+        self.tweet.favoriteCount++;
+        self.favoriteCountLabel.text = [NSString stringWithFormat:@"%ld", self.tweet.favoriteCount];
+    }
+    if (self.tweet.favoriteCount > 1) {
+        self.favoriteLabel.text = [NSString stringWithFormat:@"%@s", FAVORITE_LABEL];
+    } else {
+        self.favoriteLabel.text = FAVORITE_LABEL;
+    }
+    self.tweet.favorited = !self.tweet.favorited;
 }
 
 - (void)didReceiveMemoryWarning {
