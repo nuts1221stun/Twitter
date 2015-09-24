@@ -8,6 +8,7 @@
 
 #import "TweetTableViewController.h"
 #import "TweetViewController.h"
+#import "ComposeViewController.h"
 #import "TweetCell.h"
 #import "TwitterClient.h"
 #import "User.h"
@@ -44,11 +45,20 @@
     UIBarButtonItem *logoutButton = [[UIBarButtonItem alloc] initWithTitle:@"Logout" style:UIBarButtonItemStylePlain target:self action:@selector(onLogoutButtonClick:)];
     self.navigationItem.leftBarButtonItem = logoutButton;
     [self.navigationItem setHidesBackButton:YES animated:YES];
+    
+    UIBarButtonItem *tweetButton = [[UIBarButtonItem alloc] initWithTitle:@"Tweet" style:UIBarButtonItemStylePlain target:self action:@selector(onTweetButtonClick:)];
+    self.navigationItem.rightBarButtonItem = tweetButton;
 }
 
 - (void)onLogoutButtonClick:(id)sender {
     [self.twitterClient logout];
 }
+
+- (void)onTweetButtonClick:(id)sender {
+    ComposeViewController *composeVC = [[ComposeViewController alloc] initWithNibName:@"ComposeViewController" bundle:nil];
+    [self.navigationController pushViewController:composeVC animated:YES];
+}
+
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     return 5;

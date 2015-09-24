@@ -104,7 +104,7 @@ NSString * const kAccessTokenSecret = @"kAccessTokenSecret";
     [self requestAccessToken: authVerifier completionHandler:^{
         [self getUser:^(User *user) {
             if (user != nil) {
-                [[NSNotificationCenter defaultCenter] postNotificationName:UserDidLoginNotification object:nil];
+                [[NSNotificationCenter defaultCenter] postNotificationName:UserDidLoginNotification object:user];
             }
             self.loginCompletionHandler(user);
         }];
