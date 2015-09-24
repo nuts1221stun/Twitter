@@ -45,8 +45,8 @@
                         <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                         <nil key="highlightedColor"/>
                     </label>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Label" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Zeh-j2-kE5">
-                        <rect key="frame" x="56" y="64" width="256" height="21"/>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Zeh-j2-kE5">
+                        <rect key="frame" x="56" y="64" width="256" height="27"/>
                         <constraints>
                             <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="21" id="ptl-nu-ikQ"/>
                         </constraints>
@@ -54,18 +54,18 @@
                         <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                         <nil key="highlightedColor"/>
                     </label>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="1234567" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lKI-Q5-Qka">
-                        <rect key="frame" x="152" y="95" width="52" height="16"/>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1234567" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lKI-Q5-Qka">
+                        <rect key="frame" x="152" y="101" width="52" height="16"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="52" id="lXR-gd-f6f"/>
                             <constraint firstAttribute="height" constant="16" id="mcr-i0-0N6"/>
                         </constraints>
                         <fontDescription key="fontDescription" type="system" pointSize="12"/>
-                        <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                        <color key="textColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="calibratedRGB"/>
                         <nil key="highlightedColor"/>
                     </label>
-                    <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zGu-EP-iXS">
-                        <rect key="frame" x="56" y="95" width="16" height="16"/>
+                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zGu-EP-iXS">
+                        <rect key="frame" x="56" y="101" width="16" height="16"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="16" id="79o-gq-0tL"/>
                             <constraint firstAttribute="width" constant="16" id="Fsn-Le-ukN"/>
@@ -73,9 +73,12 @@
                         <state key="normal" title="Button" image="reply">
                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                         </state>
+                        <connections>
+                            <action selector="onReplyButtonClick:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="m25-HP-dEm"/>
+                        </connections>
                     </button>
-                    <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pPG-eA-KTe">
-                        <rect key="frame" x="132" y="95" width="16" height="16"/>
+                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pPG-eA-KTe">
+                        <rect key="frame" x="132" y="101" width="16" height="16"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="16" id="0s6-Sy-SbG"/>
                             <constraint firstAttribute="height" constant="16" id="RBa-ql-gs4"/>
@@ -83,9 +86,12 @@
                         <state key="normal" title="Button" image="retweet">
                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                         </state>
+                        <connections>
+                            <action selector="onRetweetButtonClick:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="k74-zd-Vxm"/>
+                        </connections>
                     </button>
-                    <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4uY-eS-CUB">
-                        <rect key="frame" x="212" y="95" width="16" height="16"/>
+                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4uY-eS-CUB">
+                        <rect key="frame" x="212" y="101" width="16" height="16"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="16" id="MXJ-ti-Sa4"/>
                             <constraint firstAttribute="width" constant="16" id="drn-H0-GrO"/>
@@ -93,15 +99,18 @@
                         <state key="normal" title="Button" image="favorite">
                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                         </state>
+                        <connections>
+                            <action selector="onFavoriteButtonClick:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="cDz-ME-mNY"/>
+                        </connections>
                     </button>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="1234567" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OAU-mp-Dgr">
-                        <rect key="frame" x="232" y="95" width="52" height="16"/>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1234567" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OAU-mp-Dgr">
+                        <rect key="frame" x="232" y="101" width="52" height="16"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="16" id="15q-nt-7YX"/>
                             <constraint firstAttribute="width" constant="52" id="ozT-Va-Tbm"/>
                         </constraints>
                         <fontDescription key="fontDescription" type="system" pointSize="12"/>
-                        <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                        <color key="textColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="calibratedRGB"/>
                         <nil key="highlightedColor"/>
                     </label>
                 </subviews>
@@ -151,9 +160,12 @@
             </tableViewCellContentView>
             <connections>
                 <outlet property="createdAtLabel" destination="Ea0-9W-Q6S" id="B4l-GB-nLQ"/>
+                <outlet property="favoriteButton" destination="4uY-eS-CUB" id="hez-Ha-0LG"/>
                 <outlet property="favoriteCountLabel" destination="OAU-mp-Dgr" id="ezg-F9-kVF"/>
                 <outlet property="nameLabel" destination="sV1-gN-Csq" id="yZH-vj-AE2"/>
                 <outlet property="profileImage" destination="yhn-P1-Jnx" id="RKp-WF-1Km"/>
+                <outlet property="replayButton" destination="zGu-EP-iXS" id="Vw0-nr-M4P"/>
+                <outlet property="retweetButton" destination="pPG-eA-KTe" id="udI-ud-p7V"/>
                 <outlet property="retweetCountLabel" destination="lKI-Q5-Qka" id="tH4-Pu-Tcc"/>
                 <outlet property="screenNameLabel" destination="HNt-3M-s4g" id="y58-8T-QWw"/>
                 <outlet property="tweetTextLabel" destination="Zeh-j2-kE5" id="DX8-RV-lkO"/>

@@ -12,7 +12,7 @@
 #import "User.h"
 #import "Tweet.h"
 
-@interface TweetViewController () <UITableViewDataSource, UITableViewDelegate>
+@interface TweetViewController () <UITableViewDataSource, UITableViewDelegate, TweetCellDelegate>
 
 @property (strong, nonatomic) TwitterClient *twitterClient;
 @property (strong, nonatomic) NSArray *tweets;
@@ -27,9 +27,6 @@
     self.twitterClient = [TwitterClient sharedInstance];
     
     [self.twitterClient getHomeTimeline:^(NSArray *tweets) {
-        //for (Tweet *tweet in tweets) {
-            //NSLog(@"%@", tweet.text);
-        //}
         self.tweets = tweets;
         [self.tweetTableView reloadData];
     }];
@@ -38,6 +35,10 @@
     self.tweetTableView.dataSource = self;
     self.tweetTableView.rowHeight = UITableViewAutomaticDimension;
     self.tweetTableView.estimatedRowHeight = 200.0;
+    
+    //[self.twitterClient postCreateFavorite:@"646946498693873664" completionHandler:^{
+        //NSLog(@"complete favorite");
+    //}];
     
     [self setUpNavigationBar];
 }
@@ -76,13 +77,44 @@
     cell.retweetCountLabel.text = [NSString stringWithFormat:@"%ld", tweet.retweetCount];
     cell.favoriteCountLabel.text = [NSString stringWithFormat:@"%ld", tweet.favoriteCount];
     
+    if (tweet.retweeted) {
+        [cell.retweetButton setImage:[UIImage imageNamed:@"retweetOn.png"] forState:UIControlStateNormal];
+    }
+    if (tweet.favorited) {
+        [cell.favoriteButton setImage:[UIImage imageNamed:@"favoriteOn.png"] forState:UIControlStateNormal];
+    }
     
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:tweet.user.profileImageUrl]];
     [request addValue:@"image/*" forHTTPHeaderField:@"Accept"];
     [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
         cell.profileImage.image = [UIImage imageWithData:data];
     }];
+    
+    cell.delegate = self;
     return cell;
+}
+
+- (void)tweetCell:(TweetCell *)cell didClickReplyButton:(BOOL)value {
+    
+}
+- (void)tweetCell:(TweetCell *)cell didClickRetweetButton:(BOOL)value {
+    NSLog(@"retweet!");
+}
+- (void)tweetCell:(TweetCell *)cell didClickFavoriteButton:(BOOL)value {
+    NSIndexPath *indexPath = [self.tweetTableView indexPathForCell:cell];
+    Tweet *tweet = self.tweets[indexPath.row];
+    if (tweet.favorited) {
+        [self.twitterClient unFavorite:tweet.tweetId completionHandler:^{}];
+        [cell.favoriteButton setImage:[UIImage imageNamed:@"favorite.png"] forState:UIControlStateNormal];
+        tweet.favoriteCount--;
+        cell.favoriteCountLabel.text = [NSString stringWithFormat:@"%ld", tweet.favoriteCount];
+    } else {
+        [self.twitterClient favorite:tweet.tweetId completionHandler:^{}];
+        [cell.favoriteButton setImage:[UIImage imageNamed:@"favoriteOn.png"] forState:UIControlStateNormal];
+        tweet.favoriteCount++;
+        cell.favoriteCountLabel.text = [NSString stringWithFormat:@"%ld", tweet.favoriteCount];
+    }
+    tweet.favorited = !tweet.favorited;
 }
 
 - (void)didReceiveMemoryWarning {

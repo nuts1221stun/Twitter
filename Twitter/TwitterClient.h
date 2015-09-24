@@ -34,5 +34,7 @@ extern NSString * const UserDidLogoutNotification;
 - (void)logout;
 - (void)openUrl:(NSURL *)url;
 - (void)getHomeTimeline:(void (^)(NSArray *tweets))completionHandler;
+- (void)favorite:(NSString *)tweetId completionHandler:(void (^)())completionHandler;
+- (void)unFavorite:(NSString *)tweetId completionHandler:(void (^)())completionHandler;
 
 @end

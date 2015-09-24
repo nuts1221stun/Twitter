@@ -18,5 +18,14 @@
 
     // Configure the view for the selected state
 }
+- (IBAction)onReplyButtonClick:(id)sender {
+    [self.delegate tweetCell:self didClickReplyButton:YES];
+}
+- (IBAction)onRetweetButtonClick:(id)sender {
+    [self.delegate tweetCell:self didClickRetweetButton:YES];
+}
+- (IBAction)onFavoriteButtonClick:(id)sender {
+    [self.delegate tweetCell:self didClickFavoriteButton:YES];
+}
 
 @end
