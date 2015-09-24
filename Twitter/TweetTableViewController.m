@@ -7,6 +7,7 @@
 //
 
 #import "TweetTableViewController.h"
+#import "TweetViewController.h"
 #import "TweetCell.h"
 #import "TwitterClient.h"
 #import "User.h"
@@ -60,7 +61,7 @@
         cell = [tableView dequeueReusableCellWithIdentifier:@"tweetCell"];
     }
     Tweet *tweet = self.tweets[indexPath.row];
-    //cell.textLabel.text = tweet.text;
+
     cell.nameLabel.text = tweet.user.name;
     if (tweet.user.screenName != nil) {
         cell.screenNameLabel.text = [NSString stringWithFormat:@"@%@", tweet.user.screenName];
@@ -88,6 +89,15 @@
     
     cell.delegate = self;
     return cell;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    [tableView deselectRowAtIndexPath:indexPath animated:NO];
+    Tweet *tweet = self.tweets[indexPath.row];
+    
+    TweetViewController *tweetVC = [[TweetViewController alloc] initWithNibName:@"TweetViewController" bundle:nil];
+    tweetVC.tweet = tweet;
+    [self.navigationController pushViewController:tweetVC animated:YES];
 }
 
 - (void)tweetCell:(TweetCell *)cell didClickReplyButton:(BOOL)value {
