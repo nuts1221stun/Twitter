@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface TweetViewController : UIViewController
+@interface TweetTableViewController : UIViewController
 
 @end

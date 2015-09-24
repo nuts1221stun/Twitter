@@ -8,7 +8,7 @@
 
 #import "AppDelegate.h"
 #import "LoginViewController.h"
-#import "TweetViewController.h"
+#import "TweetTableViewController.h"
 #import "TwitterClient.h"
 #import "User.h"
 
@@ -54,7 +54,7 @@
 }
 
 - (void)useTweetViewController {
-    self.tweetViewController = [[TweetViewController alloc] init];
+    self.tweetViewController = [[TweetTableViewController alloc] init];
     self.navigationController = [[UINavigationController alloc] initWithRootViewController:self.tweetViewController];
     self.window.rootViewController = self.navigationController;
 }

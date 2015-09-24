@@ -6,13 +6,13 @@
 //  Copyright (c) 2015 Li-Erh Chang. All rights reserved.
 //
 
-#import "TweetViewController.h"
+#import "TweetTableViewController.h"
 #import "TweetCell.h"
 #import "TwitterClient.h"
 #import "User.h"
 #import "Tweet.h"
 
-@interface TweetViewController () <UITableViewDataSource, UITableViewDelegate, TweetCellDelegate>
+@interface TweetTableViewController () <UITableViewDataSource, UITableViewDelegate, TweetCellDelegate>
 
 @property (strong, nonatomic) TwitterClient *twitterClient;
 @property (strong, nonatomic) NSArray *tweets;
@@ -20,7 +20,7 @@
 
 @end
 
-@implementation TweetViewController
+@implementation TweetTableViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -35,10 +35,6 @@
     self.tweetTableView.dataSource = self;
     self.tweetTableView.rowHeight = UITableViewAutomaticDimension;
     self.tweetTableView.estimatedRowHeight = 200.0;
-    
-    //[self.twitterClient postCreateFavorite:@"646946498693873664" completionHandler:^{
-        //NSLog(@"complete favorite");
-    //}];
     
     [self setUpNavigationBar];
 }

@@ -9,7 +9,7 @@
 #import "LoginViewController.h"
 #import "TwitterClient.h"
 #import "User.h"
-#import "TweetViewController.h"
+#import "TweetTableViewController.h"
 
 @interface LoginViewController ()
 @property (weak, nonatomic) IBOutlet UIButton *loginButton;
