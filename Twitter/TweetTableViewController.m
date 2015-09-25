@@ -18,6 +18,8 @@
 
 @property (strong, nonatomic) TwitterClient *twitterClient;
 @property (strong, nonatomic) NSArray *tweets;
+@property (strong, nonatomic) UIRefreshControl *refreshControl;
+
 @property (weak, nonatomic) IBOutlet UITableView *tweetTableView;
 
 @end
@@ -29,12 +31,10 @@
     self.twitterClient = [TwitterClient sharedInstance];
     self.tweets = nil;
     
-    [self.twitterClient getHomeTimeline:^(NSArray *tweets) {
-        if (tweets != nil) {
-            self.tweets = tweets;
-            [self.tweetTableView reloadData];
-        }
-    }];
+    // refresh control
+    self.refreshControl = [[UIRefreshControl alloc] init];
+    [self.tweetTableView addSubview:self.refreshControl];
+    [self.refreshControl addTarget:self action:@selector(getTweets) forControlEvents:UIControlEventValueChanged];
     
     self.tweetTableView.delegate = self;
     self.tweetTableView.dataSource = self;
@@ -42,6 +42,17 @@
     self.tweetTableView.estimatedRowHeight = 200.0;
     
     [self setUpNavigationBar];
+    [self getTweets];
+}
+
+- (void)getTweets {
+    [self.twitterClient getHomeTimeline:^(NSArray *tweets) {
+        if (tweets != nil) {
+            self.tweets = tweets;
+            [self.tweetTableView reloadData];
+            [self.refreshControl endRefreshing];
+        }
+    }];
 }
 
 - (void)setUpNavigationBar {
@@ -64,14 +75,18 @@
 
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 5;
+    long count = 0;
+    if (self.tweets != nil) {
+        count = self.tweets.count;
+    }
+    return count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     if (self.tweets == nil) {
         return [[UITableViewCell alloc] init];
     }
-    
+
     TweetCell *cell = [tableView dequeueReusableCellWithIdentifier:@"tweetCell"];
     if (!cell) {
         [tableView registerNib:[UINib nibWithNibName:@"TweetCell" bundle:nil] forCellReuseIdentifier:@"tweetCell"];
