@@ -113,7 +113,7 @@ NSString * const kAccessTokenSecret = @"kAccessTokenSecret";
 }
 
 - (void)getUser:(void (^)(User *user))completionHandler {
-    NSURLRequest *request = [self generateAuthorizedRequest:ACCOUNT_CREDENTIAL_URL withQuery:@"" withMethod:@"GET"];
+    NSURLRequest *request = [self generateAuthorizedRequest:ACCOUNT_CREDENTIAL_URL withQuery:nil withMethod:@"GET"];
     
     [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
         NSDictionary *userDictionary = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
@@ -124,23 +124,19 @@ NSString * const kAccessTokenSecret = @"kAccessTokenSecret";
 }
 
 - (void)getHomeTimeline:(void (^)(NSArray *tweets))completionHandler {
-    NSURLRequest *request = [self generateAuthorizedRequest:HOME_TIMELINE_URL withQuery:@"" withMethod:@"GET"];
+    NSURLRequest *request = [self generateAuthorizedRequest:HOME_TIMELINE_URL withQuery:nil withMethod:@"GET"];
     
     [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
 
         NSArray *tweetJsons = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
-        
+
         NSMutableArray *tweets = [[NSMutableArray alloc] init];
         for (NSDictionary *tweetJson in tweetJsons) {
             Tweet *tweet = [[Tweet alloc] initWithDictionary:tweetJson];
             [tweets addObject:tweet];
-            //NSLog(@"%@", tweetJson);
         }
         
         completionHandler(tweets);
-
-        //completionHandler(nil);
-
     }];
 }
 
@@ -148,8 +144,11 @@ NSString * const kAccessTokenSecret = @"kAccessTokenSecret";
     status = [status stringByReplacingOccurrencesOfString: @" " withString:@"%20"];
     status = [status stringByReplacingOccurrencesOfString: @"\n" withString:@"%0A"];
     
+    NSDictionary *q = @{
+        @"status": status
+    };
     NSString *query = [NSString stringWithFormat:@"status=%@", status];
-    NSMutableURLRequest *request = [[self generateAuthorizedRequest:TWEET_URL withQuery:@"" withMethod:@"POST"] mutableCopy];
+    NSMutableURLRequest *request = [[self generateAuthorizedRequest:TWEET_URL withQuery:q withMethod:@"POST"] mutableCopy];
     request.HTTPMethod = @"POST";
     request.HTTPBody = [query dataUsingEncoding:NSUTF8StringEncoding];
     
@@ -161,8 +160,11 @@ NSString * const kAccessTokenSecret = @"kAccessTokenSecret";
 }
 
 - (void)favorite:(NSString *)tweetId completionHandler:(void (^)())completionHandler {
+    NSDictionary *q = @{
+        @"id": tweetId
+    };
     NSString *query = [NSString stringWithFormat:@"id=%@", tweetId];
-    NSMutableURLRequest *request = [[self generateAuthorizedRequest:CREATE_FAVORITE_URL withQuery:query withMethod:@"POST"] mutableCopy];
+    NSMutableURLRequest *request = [[self generateAuthorizedRequest:CREATE_FAVORITE_URL withQuery:q withMethod:@"POST"] mutableCopy];
     request.HTTPMethod = @"POST";
     request.HTTPBody = [query dataUsingEncoding:NSUTF8StringEncoding];
     
@@ -174,8 +176,11 @@ NSString * const kAccessTokenSecret = @"kAccessTokenSecret";
 }
 
 - (void)unFavorite:(NSString *)tweetId completionHandler:(void (^)())completionHandler {
+    NSDictionary *q = @{
+        @"id": tweetId
+    };
     NSString *query = [NSString stringWithFormat:@"id=%@", tweetId];
-    NSMutableURLRequest *request = [[self generateAuthorizedRequest:DESTROY_FAVORITE_URL withQuery:query withMethod:@"POST"] mutableCopy];
+    NSMutableURLRequest *request = [[self generateAuthorizedRequest:DESTROY_FAVORITE_URL withQuery:q withMethod:@"POST"] mutableCopy];
     request.HTTPMethod = @"POST";
     request.HTTPBody = [query dataUsingEncoding:NSUTF8StringEncoding];
     
@@ -252,11 +257,23 @@ NSString * const kAccessTokenSecret = @"kAccessTokenSecret";
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
-- (NSURLRequest *)generateAuthorizedRequest:(NSString *)url withQuery:(NSString *)query withMethod:(NSString *)method {
+- (NSURLRequest *)generateAuthorizedRequest:(NSString *)url withQuery:(NSDictionary *)query withMethod:(NSString *)method {
     NSMutableURLRequest *request;
-    NSString *separatorString = ([query isEqualToString:@""]) ? @"" : @"&";
-    NSString *signatureBase = [NSString stringWithFormat:@"%@&%@%@%@", method, url, separatorString, query];
-    [self initAuthData:signatureBase isQueryAdded:![query isEqualToString:@""] shouldAddCallback:false shouldAddToken:true];
+
+    NSString *signatureBase = [NSString stringWithFormat:@"%@&%@", method, url];
+
+    if (self.authAccessToken == nil) {
+        NSDictionary *accessTokenDictionary = [self readAccessToken];
+        self.authAccessToken = [accessTokenDictionary objectForKey:kAccessToken];
+        self.authAccessTokenSecret = [accessTokenDictionary objectForKey:kAccessTokenSecret];
+    }
+    NSMutableDictionary *q = [[NSMutableDictionary alloc] init];
+    if (query != nil) {
+        [q setValuesForKeysWithDictionary:query];
+    }
+    [q setValue:self.authAccessToken forKey:@"oauth_token"];
+    
+    [self initAuthData:signatureBase query:q];
     
     NSString *header = [self generateRequestHeader];
     
@@ -268,12 +285,18 @@ NSString * const kAccessTokenSecret = @"kAccessTokenSecret";
 
 - (void)requestAuthToken:(void (^)())completionHandler {
     NSString *signatureBase = [NSString stringWithFormat:@"GET&%@", REQUEST_TOKEN_URL];
-    [self initAuthData:signatureBase isQueryAdded:NO shouldAddCallback:true shouldAddToken:false];
+    
+    NSString *escapedCallbackUrl = [CALLBACK_URL stringByReplacingOccurrencesOfString: @":" withString:@"%253A"];
+    escapedCallbackUrl = [escapedCallbackUrl stringByReplacingOccurrencesOfString: @"/" withString:@"%252F"];
+    NSDictionary *query = @{
+        @"oauth_callback": escapedCallbackUrl
+    };
+    [self initAuthData:signatureBase query:query];
     
     NSString *requestTokenHeader;
     requestTokenHeader = [self generateRequestHeader];
     
-    NSString *escapedCallbackUrl = [CALLBACK_URL stringByReplacingOccurrencesOfString: @":" withString:@"%3A"];
+    escapedCallbackUrl = [CALLBACK_URL stringByReplacingOccurrencesOfString: @":" withString:@"%3A"];
     escapedCallbackUrl = [escapedCallbackUrl stringByReplacingOccurrencesOfString: @"/" withString:@"%2F"];
     
     NSString *requestTokenUrl = [NSString stringWithFormat:@"%@?oauth_callback=%@", REQUEST_TOKEN_URL, escapedCallbackUrl];
@@ -281,11 +304,9 @@ NSString * const kAccessTokenSecret = @"kAccessTokenSecret";
     NSMutableURLRequest* request = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:requestTokenUrl]];
     
     [request setValue:requestTokenHeader forHTTPHeaderField:@"Authorization"];
-    //NSLog(@"request auth token: url=%@", requestTokenUrl);
-    //NSLog(@"request auth token: header=%@", requestTokenHeader);
+
     [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
         NSString *str = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-        //NSLog(@"request auth token: response=%@", str);
         [self parseAuthTokenAndTokenSecretFromString:str];
         completionHandler();
     }];
@@ -309,74 +330,51 @@ NSString * const kAccessTokenSecret = @"kAccessTokenSecret";
 - (NSString *)generateRequestHeader {
     NSString *requestHeader = @"OAuth ";
     
-    for (int i = 0; i < self.authData.count; i++) {
-        if ([self.authDataName[i] isEqualToString:@"oauth_callback"]) {
+    NSArray *sortedKeys = [[self.authDataDictionary allKeys] sortedArrayUsingSelector: @selector(compare:)];
+    
+    for (int i = 0; i < sortedKeys.count; i++) {
+        NSString *key = sortedKeys[i];
+        if ([key isEqualToString:@"oauth_callback"]) {
             continue;
         }
-        NSString *comma = (i == self.authData.count - 1) ? @"" : @", ";
-        requestHeader = [NSString stringWithFormat:@"%@%@=\"%@\"%@", requestHeader, self.authDataName[i], self.authData[i], comma];
+        NSString *comma = (i == sortedKeys.count - 1) ? @"" : @", ";
+        requestHeader = [NSString stringWithFormat:@"%@%@=\"%@\"%@", requestHeader, key, [self.authDataDictionary valueForKey:key], comma];
     }
     
     return requestHeader;
 }
 
-- (void)initAuthData:(NSString *)url isQueryAdded:(BOOL)isQueryAdded shouldAddCallback:(BOOL)shouldAddCallback shouldAddToken:(BOOL)shouldAddToken {
-    self.authData = [[NSMutableArray alloc] init];
-    self.authDataName = [[NSMutableArray alloc] init];
+- (void)initAuthData:(NSString *)url query:(NSDictionary *)query {
+    self.authDataDictionary = [[NSMutableDictionary alloc] init];
     
-    int signatureIndex = 2;
+    [self.authDataDictionary setValue:OAUTH_CONSUMER_KEY forKey:@"oauth_consumer_key"];
     
-    if (shouldAddCallback) {
-        NSString *escapedCallbackUrl = [CALLBACK_URL stringByReplacingOccurrencesOfString: @":" withString:@"%253A"];
-        escapedCallbackUrl = [escapedCallbackUrl stringByReplacingOccurrencesOfString: @"/" withString:@"%252F"];
-        [self.authDataName addObject:@"oauth_callback"];
-        [self.authData addObject:escapedCallbackUrl];
-        signatureIndex = 3;
-    }
+    [self.authDataDictionary setValue:OAUTH_NONCE forKey:@"oauth_nonce"];
     
-    [self.authDataName addObject:@"oauth_consumer_key"];
-    [self.authData addObject:OAUTH_CONSUMER_KEY];
+    [self.authDataDictionary setValue:OAUTH_SIGNATURE_METHOD forKey:@"oauth_signature_method"];
+
+    [self.authDataDictionary setValue:[NSString stringWithFormat:@"%ld", (long)[[NSDate date] timeIntervalSince1970]] forKey:@"oauth_timestamp"];
+
+    [self.authDataDictionary setValue:OAUTH_VERSION forKey:@"oauth_version"];
     
-    [self.authDataName addObject:@"oauth_nonce"];
-    [self.authData addObject:OAUTH_NONCE];
+    [self.authDataDictionary setValuesForKeysWithDictionary:query];
+
+    NSString *signature = [self generateSignature: url];
     
-    [self.authDataName addObject:@"oauth_signature"];
-    [self.authData addObject:@""];
-    
-    [self.authDataName addObject:@"oauth_signature_method"];
-    [self.authData addObject:OAUTH_SIGNATURE_METHOD];
-    
-    [self.authDataName addObject:@"oauth_timestamp"];
-    [self.authData addObject:[NSString stringWithFormat:@"%ld", (long)[[NSDate date] timeIntervalSince1970]]];
-    
-    if (shouldAddToken) {
-        if (self.authAccessToken == nil) {
-            NSDictionary *accessTokenDictionary = [self readAccessToken];
-            self.authAccessToken = [accessTokenDictionary objectForKey:kAccessToken];
-            self.authAccessTokenSecret = [accessTokenDictionary objectForKey:kAccessTokenSecret];
-        }
-        [self.authDataName addObject:@"oauth_token"];
-        [self.authData addObject:self.authAccessToken];
-    }
-    
-    [self.authDataName addObject:@"oauth_version"];
-    [self.authData addObject:OAUTH_VERSION];
-    
-    
-    NSString *signature = [self generateSignature: url isQueryAdded:isQueryAdded];
-    
-    self.authData[signatureIndex] = signature;
+    [self.authDataDictionary setValue:signature forKey:@"oauth_signature"];
 }
 
-- (NSString *)generateSignature:(NSString *)url isQueryAdded:(BOOL)isQueryAdded {
+- (NSString *)generateSignature:(NSString *)url {
     NSString *signatureBase = [NSString stringWithFormat:@"%@", [url stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+    NSArray *sortedKeys = [[self.authDataDictionary allKeys] sortedArrayUsingSelector: @selector(compare:)];
     
-    for (int i = 0; i < self.authData.count; i++) {
-        if ([self.authDataName[i] isEqualToString:@"oauth_signature"]) {
+    for (int i = 0; i < sortedKeys.count; i++) {
+        NSString *key = sortedKeys[i];
+        if ([key isEqualToString:@"oauth_signature"]) {
             continue;
         }
-        NSString *amp = (i == 0 && !isQueryAdded) ? @"&" : @"%26";
-        signatureBase = [NSString stringWithFormat:@"%@%@%@=%@", signatureBase, amp, self.authDataName[i], self.authData[i]];
+        NSString *amp = (i == 0) ? @"&" : @"%26";
+        signatureBase = [NSString stringWithFormat:@"%@%@%@=%@", signatureBase, amp, key, [self.authDataDictionary valueForKey:key]];
     }
     
     signatureBase = [signatureBase stringByReplacingOccurrencesOfString: @":" withString:@"%3A"];

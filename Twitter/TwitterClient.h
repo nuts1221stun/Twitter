@@ -16,6 +16,7 @@ extern NSString * const UserDidLogoutNotification;
 
 @interface TwitterClient : NSObject
 
+@property (strong, nonatomic) NSDictionary *authDataDictionary;
 @property (strong, nonatomic) NSMutableArray *authData;
 @property (strong, nonatomic) NSMutableArray *authDataName;
 @property (strong, nonatomic) NSString *authToken;
