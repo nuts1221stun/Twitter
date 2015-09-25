@@ -6,10 +6,10 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="ComposeViewController">
             <connections>
+                <outlet property="editableTextView" destination="YDJ-Ov-Dgp" id="424-5a-uWY"/>
                 <outlet property="nameLabel" destination="kB2-1I-5B8" id="TU5-S3-Srq"/>
                 <outlet property="profileImage" destination="KUe-mr-tty" id="LxJ-2k-ffx"/>
                 <outlet property="screenNameLabel" destination="ssv-xf-iGc" id="prf-VG-1O4"/>
-                <outlet property="textField" destination="KI5-Tn-maG" id="8t9-tx-xEF"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
         </placeholder>
@@ -43,26 +43,27 @@
                     <color key="textColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="calibratedRGB"/>
                     <nil key="highlightedColor"/>
                 </label>
-                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" placeholder="Write something" minimumFontSize="16" translatesAutoresizingMaskIntoConstraints="NO" id="KI5-Tn-maG">
-                    <rect key="frame" x="16" y="74" width="288" height="478"/>
-                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                    <textInputTraits key="textInputTraits"/>
-                </textField>
+                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" text="write something..." translatesAutoresizingMaskIntoConstraints="NO" id="YDJ-Ov-Dgp">
+                    <rect key="frame" x="16" y="72" width="288" height="480"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                </textView>
             </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
             <constraints>
-                <constraint firstItem="ssv-xf-iGc" firstAttribute="trailing" secondItem="KI5-Tn-maG" secondAttribute="trailing" id="2h1-HL-Dh5"/>
                 <constraint firstItem="kB2-1I-5B8" firstAttribute="leading" secondItem="KUe-mr-tty" secondAttribute="trailing" constant="8" id="786-50-7dd"/>
-                <constraint firstAttribute="bottom" secondItem="KI5-Tn-maG" secondAttribute="bottom" constant="16" id="GbA-3e-c68"/>
                 <constraint firstItem="kB2-1I-5B8" firstAttribute="top" secondItem="KUe-mr-tty" secondAttribute="top" id="KGJ-s4-mSj"/>
                 <constraint firstItem="kB2-1I-5B8" firstAttribute="trailing" secondItem="ssv-xf-iGc" secondAttribute="trailing" id="Kd9-0G-PCC"/>
+                <constraint firstAttribute="bottom" secondItem="YDJ-Ov-Dgp" secondAttribute="bottom" constant="16" id="OIu-Xc-01w"/>
                 <constraint firstItem="KUe-mr-tty" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="16" id="Opt-fV-fH9"/>
+                <constraint firstItem="YDJ-Ov-Dgp" firstAttribute="trailing" secondItem="ssv-xf-iGc" secondAttribute="trailing" id="QeP-AK-sMc"/>
                 <constraint firstItem="kB2-1I-5B8" firstAttribute="leading" secondItem="ssv-xf-iGc" secondAttribute="leading" id="RM4-ei-gh3"/>
-                <constraint firstItem="KUe-mr-tty" firstAttribute="leading" secondItem="KI5-Tn-maG" secondAttribute="leading" id="Ufx-jj-HZe"/>
+                <constraint firstItem="YDJ-Ov-Dgp" firstAttribute="top" secondItem="ssv-xf-iGc" secondAttribute="bottom" constant="16" id="UdR-3q-dtN"/>
                 <constraint firstItem="KUe-mr-tty" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="16" id="ZWH-Nu-1Ll"/>
                 <constraint firstItem="KUe-mr-tty" firstAttribute="bottom" secondItem="ssv-xf-iGc" secondAttribute="bottom" id="dYH-57-rKp"/>
                 <constraint firstAttribute="trailing" secondItem="kB2-1I-5B8" secondAttribute="trailing" constant="16" id="mRS-Nz-RRj"/>
-                <constraint firstItem="KI5-Tn-maG" firstAttribute="top" secondItem="ssv-xf-iGc" secondAttribute="bottom" constant="18" id="ot6-R6-jPh"/>
+                <constraint firstItem="YDJ-Ov-Dgp" firstAttribute="leading" secondItem="KUe-mr-tty" secondAttribute="leading" id="n1u-P1-iBg"/>
             </constraints>
             <point key="canvasLocation" x="533" y="438"/>
         </view>

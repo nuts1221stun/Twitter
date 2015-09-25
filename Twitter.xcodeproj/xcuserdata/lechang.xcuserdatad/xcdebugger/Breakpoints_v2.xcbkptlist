@@ -10,11 +10,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Twitter/TwitterClient.m"
-            timestampString = "464780247.445934"
+            timestampString = "464793907.336571"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "238"
-            endingLineNumber = "238"
+            startingLineNumber = "255"
+            endingLineNumber = "255"
             landmarkName = "-generateAuthorizedRequest:withQuery:withMethod:"
             landmarkType = "5">
          </BreakpointContent>

@@ -7,6 +7,7 @@
 //
 
 #import "ComposeViewController.h"
+#import "TwitterClient.h"
 #import "User.h"
 
 @interface ComposeViewController ()
@@ -48,6 +49,8 @@
 
 
 - (void)onTweetButtonClick:(id)sender {
+    NSLog(@"%@", self.editableTextView.text);
+    [[TwitterClient sharedInstance] tweet:self.editableTextView.text completionHandler:^{}];
     [self.navigationController popViewControllerAnimated:YES];
 }
 

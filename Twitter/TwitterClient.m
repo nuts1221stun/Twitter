@@ -19,6 +19,7 @@
 #define ACCESS_TOKEN_URL @"https://api.twitter.com/oauth/access_token"
 #define ACCOUNT_CREDENTIAL_URL @"https://api.twitter.com/1.1/account/verify_credentials.json"
 #define HOME_TIMELINE_URL @"https://api.twitter.com/1.1/statuses/home_timeline.json"
+#define TWEET_URL @"https://api.twitter.com/1.1/statuses/update.json"
 #define CREATE_FAVORITE_URL @"https://api.twitter.com/1.1/favorites/create.json"
 #define DESTROY_FAVORITE_URL @"https://api.twitter.com/1.1/favorites/destroy.json"
 
@@ -140,6 +141,22 @@ NSString * const kAccessTokenSecret = @"kAccessTokenSecret";
 
         //completionHandler(nil);
 
+    }];
+}
+
+- (void)tweet:(NSString *)status completionHandler:(void (^)())completionHandler {
+    status = [status stringByReplacingOccurrencesOfString: @" " withString:@"%20"];
+    status = [status stringByReplacingOccurrencesOfString: @"\n" withString:@"%0A"];
+    
+    NSString *query = [NSString stringWithFormat:@"status=%@", status];
+    NSMutableURLRequest *request = [[self generateAuthorizedRequest:TWEET_URL withQuery:@"" withMethod:@"POST"] mutableCopy];
+    request.HTTPMethod = @"POST";
+    request.HTTPBody = [query dataUsingEncoding:NSUTF8StringEncoding];
+    
+    [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
+        NSDictionary *favoriteJson = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
+        NSLog(@"%@", favoriteJson);
+        completionHandler();
     }];
 }
 
@@ -366,6 +383,7 @@ NSString * const kAccessTokenSecret = @"kAccessTokenSecret";
     signatureBase = [signatureBase stringByReplacingOccurrencesOfString: @"/" withString:@"%2F"];
     signatureBase = [signatureBase stringByReplacingOccurrencesOfString: @"=" withString:@"%3D"];
     
+    NSLog(@"signature base: %@", signatureBase);
     if (!self.authAccessTokenSecret) {
         self.authAccessTokenSecret = @"";
     }
@@ -373,7 +391,7 @@ NSString * const kAccessTokenSecret = @"kAccessTokenSecret";
     NSString *signature =[self hmacsha1:signatureBase key:signingKey];
     
     signature = [signature urlencode];
-    
+    NSLog(@"signature: %@", signature);
     return signature;
 }
 
