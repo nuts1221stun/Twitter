@@ -9,14 +9,38 @@
 #import "ComposeViewController.h"
 #import "TwitterClient.h"
 #import "User.h"
+#import "Tweet.h"
 
 @interface ComposeViewController ()
 
 @property (strong, nonatomic) User *user;
+@property (strong, nonatomic) Tweet *replyingTweet;
 
 @end
 
+NSString * const TWEET = @"Tweet";
+NSString * const RETWEET = @"Retweet";
+NSString * const REPLY = @"Reply";
+
 @implementation ComposeViewController
+
+- (instancetype)initWithNibNameAsTweetState:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
+    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    self.state = TWEET;
+    return self;
+}
+- (instancetype)initWithNibNameAsReplyState:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil replyingTweet:(Tweet *)tweet {
+    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    self.state = REPLY;
+    self.replyingTweet = tweet;
+    return self;
+}
+
+- (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
+    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    self.state = TWEET;
+    return self;
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -39,8 +63,16 @@
     UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(onCancelButtonClick:)];
     self.navigationItem.leftBarButtonItem = cancelButton;
     
-    UIBarButtonItem *tweetButton = [[UIBarButtonItem alloc] initWithTitle:@"Tweet" style:UIBarButtonItemStylePlain target:self action:@selector(onTweetButtonClick:)];
-    self.navigationItem.rightBarButtonItem = tweetButton;
+    if ([self.state isEqualToString:RETWEET]) {
+        UIBarButtonItem *retweetButton = [[UIBarButtonItem alloc] initWithTitle:self.state style:UIBarButtonItemStylePlain target:self action:@selector(onRetweetButtonClick:)];
+        self.navigationItem.rightBarButtonItem = retweetButton;
+    } else if ([self.state isEqualToString:REPLY]) {
+        UIBarButtonItem *replyButton = [[UIBarButtonItem alloc] initWithTitle:self.state style:UIBarButtonItemStylePlain target:self action:@selector(onReplyButtonClick:)];
+        self.navigationItem.rightBarButtonItem = replyButton;
+    } else {
+        UIBarButtonItem *tweetButton = [[UIBarButtonItem alloc] initWithTitle:self.state style:UIBarButtonItemStylePlain target:self action:@selector(onTweetButtonClick:)];
+        self.navigationItem.rightBarButtonItem = tweetButton;
+    }
 }
 
 - (void)onCancelButtonClick:(id)sender {
@@ -48,8 +80,17 @@
 }
 
 
+- (void)onRetweetButtonClick:(id)sender {
+    [[TwitterClient sharedInstance] tweet:self.editableTextView.text completionHandler:^{}];
+    [self.navigationController popViewControllerAnimated:YES];
+}
+
+- (void)onReplyButtonClick:(id)sender {
+    [[TwitterClient sharedInstance] replyToTweet:self.replyingTweet.tweetId tweetAuthorScreenName:self.replyingTweet.user.screenName withStatus:self.editableTextView.text completionHandler:^{}];
+    [self.navigationController popViewControllerAnimated:YES];
+}
+
 - (void)onTweetButtonClick:(id)sender {
-    NSLog(@"%@", self.editableTextView.text);
     [[TwitterClient sharedInstance] tweet:self.editableTextView.text completionHandler:^{}];
     [self.navigationController popViewControllerAnimated:YES];
 }

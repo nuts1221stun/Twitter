@@ -36,6 +36,8 @@ extern NSString * const UserDidLogoutNotification;
 - (void)openUrl:(NSURL *)url;
 - (void)getHomeTimeline:(void (^)(NSArray *tweets))completionHandler;
 - (void)tweet:(NSString *)status completionHandler:(void (^)())completionHandler;
+- (void)replyToTweet:(NSString *)tweetId tweetAuthorScreenName:(NSString *)author withStatus:(NSString *)status completionHandler:(void (^)())completionHandler;
+- (void)retweet:(NSString *)tweetId completionHandler:(void (^)())completionHandler;
 - (void)favorite:(NSString *)tweetId completionHandler:(void (^)())completionHandler;
 - (void)unFavorite:(NSString *)tweetId completionHandler:(void (^)())completionHandler;
 

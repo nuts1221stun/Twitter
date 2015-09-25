@@ -27,10 +27,13 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.twitterClient = [TwitterClient sharedInstance];
+    self.tweets = nil;
     
     [self.twitterClient getHomeTimeline:^(NSArray *tweets) {
-        self.tweets = tweets;
-        [self.tweetTableView reloadData];
+        if (tweets != nil) {
+            self.tweets = tweets;
+            [self.tweetTableView reloadData];
+        }
     }];
     
     self.tweetTableView.delegate = self;
@@ -55,7 +58,7 @@
 }
 
 - (void)onTweetButtonClick:(id)sender {
-    ComposeViewController *composeVC = [[ComposeViewController alloc] initWithNibName:@"ComposeViewController" bundle:nil];
+    ComposeViewController *composeVC = [[ComposeViewController alloc] initWithNibNameAsTweetState:@"ComposeViewController" bundle:nil];
     [self.navigationController pushViewController:composeVC animated:YES];
 }
 
@@ -65,11 +68,16 @@
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (self.tweets == nil) {
+        return [[UITableViewCell alloc] init];
+    }
+    
     TweetCell *cell = [tableView dequeueReusableCellWithIdentifier:@"tweetCell"];
     if (!cell) {
         [tableView registerNib:[UINib nibWithNibName:@"TweetCell" bundle:nil] forCellReuseIdentifier:@"tweetCell"];
         cell = [tableView dequeueReusableCellWithIdentifier:@"tweetCell"];
     }
+    
     Tweet *tweet = self.tweets[indexPath.row];
 
     cell.nameLabel.text = tweet.user.name;
@@ -103,6 +111,10 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:NO];
+    if (self.tweets == nil) {
+        return;
+    }
+    
     Tweet *tweet = self.tweets[indexPath.row];
     
     TweetViewController *tweetVC = [[TweetViewController alloc] initWithNibName:@"TweetViewController" bundle:nil];
@@ -111,10 +123,17 @@
 }
 
 - (void)tweetCell:(TweetCell *)cell didClickReplyButton:(BOOL)value {
-    
+    NSIndexPath *indexPath = [self.tweetTableView indexPathForCell:cell];
+    Tweet *tweet = self.tweets[indexPath.row];
+    ComposeViewController *composeVC = [[ComposeViewController alloc] initWithNibNameAsReplyState:@"ComposeViewController" bundle:nil replyingTweet:tweet];
+    [self.navigationController pushViewController:composeVC animated:YES];
 }
 - (void)tweetCell:(TweetCell *)cell didClickRetweetButton:(BOOL)value {
-    NSLog(@"retweet!");
+    NSIndexPath *indexPath = [self.tweetTableView indexPathForCell:cell];
+    Tweet *tweet = self.tweets[indexPath.row];
+    [self.twitterClient retweet:tweet.tweetId completionHandler:^{
+        NSLog(@"retweeted!!!!!!!!");
+    }];
 }
 - (void)tweetCell:(TweetCell *)cell didClickFavoriteButton:(BOOL)value {
     NSIndexPath *indexPath = [self.tweetTableView indexPathForCell:cell];

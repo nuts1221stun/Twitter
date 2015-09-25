@@ -7,13 +7,22 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "Tweet.h"
+
+extern NSString * const TWEET;
+extern NSString * const RETWEET;
+extern NSString * const REPLY;
 
 @interface ComposeViewController : UIViewController
+
 @property (weak, nonatomic) IBOutlet UIImageView *profileImage;
 @property (weak, nonatomic) IBOutlet UILabel *nameLabel;
 @property (weak, nonatomic) IBOutlet UILabel *screenNameLabel;
 @property (weak, nonatomic) IBOutlet UITextView *editableTextView;
 
+@property (strong, nonatomic) NSString *state;
 
+- (instancetype)initWithNibNameAsTweetState:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil;
+- (instancetype)initWithNibNameAsReplyState:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil replyingTweet:(Tweet *)tweet;
 
 @end

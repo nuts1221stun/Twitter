@@ -7,6 +7,7 @@
 //
 
 #import "TweetViewController.h"
+#import "ComposeViewController.h"
 #import "TwitterClient.h"
 
 @interface TweetViewController ()
@@ -67,10 +68,13 @@ NSString * const FAVORITE_LABEL = @"FAVORITE";
     }
 }
 - (IBAction)onReplyButtonClick:(id)sender {
-    
+    ComposeViewController *composeVC = [[ComposeViewController alloc] initWithNibNameAsReplyState:@"ComposeViewController" bundle:nil replyingTweet:self.tweet];
+    [self.navigationController pushViewController:composeVC animated:YES];
 }
 - (IBAction)onRetweetButtonClick:(id)sender {
-    
+    [self.twitterClient retweet:self.tweet.tweetId completionHandler:^{
+        NSLog(@"retweeted!!!!!!!!");
+    }];
 }
 - (IBAction)onFavoriteButtonClick:(id)sender {
     if (self.tweet.favorited) {

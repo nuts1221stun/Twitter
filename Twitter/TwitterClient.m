@@ -20,6 +20,7 @@
 #define ACCOUNT_CREDENTIAL_URL @"https://api.twitter.com/1.1/account/verify_credentials.json"
 #define HOME_TIMELINE_URL @"https://api.twitter.com/1.1/statuses/home_timeline.json"
 #define TWEET_URL @"https://api.twitter.com/1.1/statuses/update.json"
+#define RETWEET_URL @"https://api.twitter.com/1.1/statuses/retweet/:id.json"
 #define CREATE_FAVORITE_URL @"https://api.twitter.com/1.1/favorites/create.json"
 #define DESTROY_FAVORITE_URL @"https://api.twitter.com/1.1/favorites/destroy.json"
 
@@ -124,12 +125,25 @@ NSString * const kAccessTokenSecret = @"kAccessTokenSecret";
 }
 
 - (void)getHomeTimeline:(void (^)(NSArray *tweets))completionHandler {
-    NSURLRequest *request = [self generateAuthorizedRequest:HOME_TIMELINE_URL withQuery:nil withMethod:@"GET"];
+    int count = 20;
+    NSDictionary *q = @{
+        @"count": @(count)
+    };
+    NSString *query = [NSString stringWithFormat:@"count=%d", count];
+    
+    NSMutableURLRequest *request = [[self generateAuthorizedRequest:HOME_TIMELINE_URL withQuery:q withMethod:@"GET"] mutableCopy];
+    [request setURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@?%@", HOME_TIMELINE_URL, query]]];
     
     [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
 
-        NSArray *tweetJsons = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
+        id tweetDictionary = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
+        
+        if (![tweetDictionary isKindOfClass:[NSArray class]]) {
+            completionHandler(nil);
+            return;
+        }
 
+        NSArray *tweetJsons = (NSArray *)tweetDictionary;
         NSMutableArray *tweets = [[NSMutableArray alloc] init];
         for (NSDictionary *tweetJson in tweetJsons) {
             Tweet *tweet = [[Tweet alloc] initWithDictionary:tweetJson];
@@ -154,8 +168,42 @@ NSString * const kAccessTokenSecret = @"kAccessTokenSecret";
     request.HTTPBody = [query dataUsingEncoding:NSUTF8StringEncoding];
 
     [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
-        NSDictionary *favoriteJson = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
+        //NSDictionary *favoriteJson = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
         //NSLog(@"%@", favoriteJson);
+        completionHandler();
+    }];
+}
+
+- (void)replyToTweet:(NSString *)tweetId tweetAuthorScreenName:(NSString *)author withStatus:(NSString *)status completionHandler:(void (^)())completionHandler {
+    status = [NSString stringWithFormat:@"@%@ %@", author, status];
+    status = [status urlencode];
+    
+    NSString *whiteSpaceStatus = [status stringByReplacingOccurrencesOfString: @"+" withString:@"%20"];
+    
+    NSDictionary *q = @{
+        @"status": whiteSpaceStatus,
+        @"in_reply_to_status_id": tweetId
+    };
+    NSString *query = [NSString stringWithFormat:@"in_reply_to_status_id=%@&status=%@", tweetId, status];
+    NSMutableURLRequest *request = [[self generateAuthorizedRequest:TWEET_URL withQuery:q withMethod:@"POST"] mutableCopy];
+    request.HTTPMethod = @"POST";
+    request.HTTPBody = [query dataUsingEncoding:NSUTF8StringEncoding];
+    
+    [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
+        //NSDictionary *favoriteJson = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
+        //NSLog(@"%@", favoriteJson);
+        completionHandler();
+    }];
+}
+
+- (void)retweet:(NSString *)tweetId completionHandler:(void (^)())completionHandler {
+    NSString *url = [RETWEET_URL stringByReplacingOccurrencesOfString: @":id" withString:tweetId];
+    NSMutableURLRequest *request = [[self generateAuthorizedRequest:url withQuery:nil withMethod:@"GET"] mutableCopy];
+    request.HTTPMethod = @"GET";
+
+    [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
+        NSDictionary *favoriteJson = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
+        NSLog(@"%@", favoriteJson);
         completionHandler();
     }];
 }
@@ -392,7 +440,6 @@ NSString * const kAccessTokenSecret = @"kAccessTokenSecret";
     NSString *signingKey = [NSString stringWithFormat:@"%@&%@", OAUTH_CONSUMER_SECRET, self.authAccessTokenSecret];
     NSString *signature =[self hmacsha1:signatureBase key:signingKey];
     
-    NSLog(@"%@", signatureBase);
     signature = [signature urlencode];
 
     return signature;

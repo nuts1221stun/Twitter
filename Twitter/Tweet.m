@@ -11,7 +11,7 @@
 @implementation Tweet
 
 - (id) initWithDictionary:(NSDictionary *)dictionary {
-    self.tweetId = dictionary[@"id"];
+    self.tweetId = [NSString stringWithFormat:@"%@", dictionary[@"id"]];
     self.createdAt = dictionary[@"created_at"];
     self.user = [[User alloc] initWithDictionary:dictionary[@"user"]];
     self.text = dictionary[@"text"];
