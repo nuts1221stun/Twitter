@@ -56,7 +56,7 @@
         plural = (components.second > 1) ? @"s" : @"";
         formattedDateString = [NSString stringWithFormat:@"%ld second%@ ago", (long)components.second, plural];
     }
-    NSLog(@"%@", formattedDateString);
+
     return formattedDateString;
 }
 
