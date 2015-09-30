@@ -27,9 +27,10 @@
     //Fri Sep 25 06:05:35 +0000 2015
     NSString *formattedDateString;
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    dateFormatter.dateFormat = @"EEE MMM d HH:mm:ss Z y";
+    [dateFormatter setDateFormat:@"EEE MMM d HH:mm:ss Z y"];
+    [dateFormatter setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_US"]];
     NSDate *date = [dateFormatter dateFromString:dateString];
-    
+    NSLog(@"%@!!!!!!%@", dateString, date);
     NSCalendarUnit units = NSCalendarUnitSecond | NSCalendarUnitMinute | NSCalendarUnitHour | NSCalendarUnitDay | NSCalendarUnitWeekOfYear | NSCalendarUnitMonth | NSCalendarUnitYear;
     NSDateComponents *components = [[NSCalendar currentCalendar] components:units fromDate:date toDate:[NSDate date] options:0];
     NSString *plural;
