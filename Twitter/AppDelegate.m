@@ -56,6 +56,8 @@
 - (void)useTweetViewController {
     self.tweetViewController = [[TweetTableViewController alloc] init];
     self.navigationController = [[UINavigationController alloc] initWithRootViewController:self.tweetViewController];
+    self.navigationController.navigationBar.barTintColor = [UIColor colorWithRed:0.0 green:0.6745098 blue:0.9294118 alpha:1.0];
+    self.navigationController.navigationBar.tintColor = [UIColor whiteColor];
     self.window.rootViewController = self.navigationController;
 }
 
