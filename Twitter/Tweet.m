@@ -16,6 +16,7 @@
     self.createdAt = [self parseDateStringToRelativeFormat:self.createdAt];
     self.user = [[User alloc] initWithDictionary:dictionary[@"user"]];
     self.text = dictionary[@"text"];
+    self.text = [self decodeHtmlEntities:self.text];
     self.retweetCount = [dictionary[@"retweet_count"] integerValue];
     self.favoriteCount = [dictionary[@"favorite_count"] integerValue];
     self.retweeted = [dictionary[@"retweeted"] boolValue];
@@ -58,6 +59,25 @@
     }
 
     return formattedDateString;
+}
+
+- (NSString *)decodeHtmlEntities:(NSString *)string {
+    NSDictionary *entityMap = @{
+        @"&quot;": @"\"",
+        @"&amp;": @"&",
+        @"&apos;": @"'",
+        @"&lt;": @"<",
+        @"&gt;": @">",
+        // HTML character entity references:
+        @"&nbsp;"    : @" ",
+        // ...
+        @"&diams;": @"♦"
+    };
+    NSArray *keys = [entityMap allKeys];
+    for (NSString *key in keys) {
+        string = [string stringByReplacingOccurrencesOfString:key withString:[entityMap objectForKey:key]];
+    }
+    return string;
 }
 
 @end
