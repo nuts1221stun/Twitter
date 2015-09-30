@@ -25,7 +25,13 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.twitterClient = [TwitterClient sharedInstance];    
+    self.twitterClient = [TwitterClient sharedInstance];
+    
+    self.loginButton.layer.cornerRadius =8.0;
+    self.loginButton.layer.borderWidth = 1.0;
+    self.loginButton.layer.borderColor = [UIColor colorWithRed:1.0 green:1.0 blue:1.0 alpha:1.0].CGColor;
+    self.loginButton.clipsToBounds = YES;
+    
 }
 - (IBAction)onLoginButtonClick:(id)sender {
     [self.twitterClient login:^(User *user) {

@@ -11,7 +11,7 @@
 #import "User.h"
 #import "Tweet.h"
 
-@interface ComposeViewController ()
+@interface ComposeViewController () <UITextViewDelegate>
 
 @property (strong, nonatomic) User *user;
 @property (strong, nonatomic) Tweet *replyingTweet;
@@ -55,6 +55,7 @@ NSString * const REPLY = @"Reply";
     [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
         self.profileImage.image = [UIImage imageWithData:data];
     }];
+     self.editableTextView.delegate = self;
     [self setUpNavigationBar];
 }
 
@@ -98,6 +99,22 @@ NSString * const REPLY = @"Reply";
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (void)textViewDidBeginEditing:(UITextView *)textView {
+    if ([textView.text isEqualToString:@"Write something..."]) {
+        textView.text = @"";
+        textView.textColor = [UIColor blackColor];
+        NSLog(@"=======");
+    }
+}
+
+- (void)textViewDidEndEditing:(UITextView *)textView {
+    if ([textView.text isEqualToString:@""]) {
+        textView.text = @"Write something...";
+        textView.textColor = [UIColor darkGrayColor];
+    }
+    [textView resignFirstResponder];
 }
 
 /*
