@@ -19,6 +19,7 @@
 @property (strong, nonatomic) TwitterClient *twitterClient;
 @property (strong, nonatomic) NSArray *tweets;
 @property (strong, nonatomic) UIRefreshControl *refreshControl;
+@property (strong, nonatomic) NSCache *cache;
 
 @property (weak, nonatomic) IBOutlet UITableView *tweetTableView;
 
@@ -43,6 +44,8 @@
     
     [self setUpNavigationBar];
     [self getTweets];
+    
+    self.cache = [[NSCache alloc] init];
 }
 
 - (void)getTweets {
@@ -115,11 +118,18 @@
     }
     
     cell.profileImage.image = nil;
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:tweet.user.profileImageUrl]];
-    [request addValue:@"image/*" forHTTPHeaderField:@"Accept"];
-    [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
-        cell.profileImage.image = [UIImage imageWithData:data];
-    }];
+    UIImage *profileImage = [self.cache objectForKey:tweet.user.profileImageUrl];
+    if (profileImage != nil) {
+        cell.profileImage.image = profileImage;
+    } else {
+        NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:tweet.user.profileImageUrl]];
+        [request addValue:@"image/*" forHTTPHeaderField:@"Accept"];
+        [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
+            UIImage *downloadedImage = [UIImage imageWithData:data];
+            cell.profileImage.image = downloadedImage;
+            [self.cache setObject:downloadedImage forKey:tweet.user.profileImageUrl];
+        }];
+    }
     
     cell.delegate = self;
     return cell;
