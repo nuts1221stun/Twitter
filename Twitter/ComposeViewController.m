@@ -55,8 +55,12 @@ NSString * const REPLY = @"Reply";
     [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
         self.profileImage.image = [UIImage imageWithData:data];
     }];
-     self.editableTextView.delegate = self;
+
     [self setUpNavigationBar];
+
+    self.editableTextView.delegate = self;
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissKeyboard)];
+    [self.composeView addGestureRecognizer:tap];
 }
 
 - (void)setUpNavigationBar {
@@ -105,16 +109,19 @@ NSString * const REPLY = @"Reply";
     if ([textView.text isEqualToString:@"Write something..."]) {
         textView.text = @"";
         textView.textColor = [UIColor blackColor];
-        NSLog(@"=======");
     }
 }
 
 - (void)textViewDidEndEditing:(UITextView *)textView {
     if ([textView.text isEqualToString:@""]) {
         textView.text = @"Write something...";
-        textView.textColor = [UIColor darkGrayColor];
+        textView.textColor = [UIColor lightGrayColor];
     }
     [textView resignFirstResponder];
+}
+
+- (void)dismissKeyboard {
+    [self.editableTextView resignFirstResponder];
 }
 
 /*

@@ -15,6 +15,7 @@ extern NSString * const REPLY;
 
 @interface ComposeViewController : UIViewController
 
+@property (strong, nonatomic) IBOutlet UIView *composeView;
 @property (weak, nonatomic) IBOutlet UIImageView *profileImage;
 @property (weak, nonatomic) IBOutlet UILabel *nameLabel;
 @property (weak, nonatomic) IBOutlet UILabel *screenNameLabel;
