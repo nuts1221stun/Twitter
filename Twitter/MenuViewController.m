@@ -36,12 +36,6 @@
     self.nameLabel.text = [TwitterClient sharedInstance].userId;
     self.screenNameLabel.text = [TwitterClient sharedInstance].userScreenName;
     
-    /*
-    [[TwitterClient sharedInstance] getUser:^(User *user) {
-        NSLog(@"========%@ %@ %@", user.name, user.profileImageUrl, user.screenName);
-        self.nameLabel.text = user.name;
-        self.screenNameLabel.text = [TwitterClient sharedInstance].userScreenName;
-    }];*/
     self.nameLabel.text = [User currentUser].name;
     self.screenNameLabel.text = [User currentUser].screenName;
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:[User currentUser].profileImageUrl]];
