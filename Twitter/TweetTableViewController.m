@@ -75,8 +75,9 @@ float const kMenuWidth = 300.0;
     
     CGRect screenRect = [[UIScreen mainScreen] bounds];
     CGFloat screenHeight = screenRect.size.height;
-
-    self.menuContainerView = [[UIView alloc] initWithFrame:CGRectMake(-kMenuWidth, 0, kMenuWidth, screenHeight)];
+    float navBarHeight = self.navigationController.navigationBar.frame.size.height + 20;
+    
+    self.menuContainerView = [[UIView alloc] initWithFrame:CGRectMake(-kMenuWidth, navBarHeight, kMenuWidth, screenHeight - navBarHeight)];
     [self.view addSubview:self.menuContainerView];
     
     self.menuViewController = [[MenuViewController alloc] init];

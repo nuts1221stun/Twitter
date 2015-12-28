@@ -7,6 +7,7 @@
 //
 
 #import "MenuViewController.h"
+#import "TwitterClient.h"
 
 @interface MenuViewController () <UITableViewDataSource, UITableViewDelegate>
 
@@ -14,6 +15,8 @@
 @property (weak, nonatomic) IBOutlet UILabel *nameLabel;
 @property (weak, nonatomic) IBOutlet UILabel *screenNameLabel;
 @property (weak, nonatomic) IBOutlet UITableView *menuTableView;
+
+@property (strong, nonatomic) NSArray *menuItems;
 
 @end
 
@@ -23,6 +26,30 @@
     [super viewDidLoad];
     self.menuTableView.delegate = self;
     self.menuTableView.dataSource = self;
+    
+    self.menuItems = @[
+        @"home",
+        @"profile",
+        @"mentions"
+    ];
+    
+    self.nameLabel.text = [TwitterClient sharedInstance].userId;
+    self.screenNameLabel.text = [TwitterClient sharedInstance].userScreenName;
+    
+    /*
+    [[TwitterClient sharedInstance] getUser:^(User *user) {
+        NSLog(@"========%@ %@ %@", user.name, user.profileImageUrl, user.screenName);
+        self.nameLabel.text = user.name;
+        self.screenNameLabel.text = [TwitterClient sharedInstance].userScreenName;
+    }];*/
+    self.nameLabel.text = [User currentUser].name;
+    self.screenNameLabel.text = [User currentUser].screenName;
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:[User currentUser].profileImageUrl]];
+    [request addValue:@"image/*" forHTTPHeaderField:@"Accept"];
+    [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
+        UIImage *downloadedImage = [UIImage imageWithData:data];
+        self.profileImage.image = downloadedImage;
+    }];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -31,7 +58,7 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 4;
+    return [self.menuItems count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -39,7 +66,7 @@
     if (!cell) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"menuCell"];
     }
-    cell.textLabel.text = @"texttexttexttexttexttexttexttexttexttext";
+    cell.textLabel.text = self.menuItems[indexPath.row];
     return cell;
 }
 
