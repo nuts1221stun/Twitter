@@ -13,19 +13,25 @@
 #import "TwitterClient.h"
 #import "User.h"
 #import "Tweet.h"
+#import "MenuViewController.h"
 
-@interface TweetTableViewController () <UITableViewDataSource, UITableViewDelegate, TweetCellDelegate>
+@interface TweetTableViewController () <UITableViewDataSource, UITableViewDelegate, TweetCellDelegate, UIGestureRecognizerDelegate>
 
 @property (strong, nonatomic) TwitterClient *twitterClient;
 @property (strong, nonatomic) NSArray *tweets;
 @property (strong, nonatomic) UIRefreshControl *refreshControl;
 @property (strong, nonatomic) NSCache *cache;
 
+@property (strong, nonatomic) UIView *menuContainerView;
+@property (strong, nonatomic) MenuViewController *menuViewController;
+
 @property (weak, nonatomic) IBOutlet UITableView *tweetTableView;
 
 @end
 
 @implementation TweetTableViewController
+
+float const kMenuWidth = 300.0;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -43,6 +49,7 @@
     self.tweetTableView.estimatedRowHeight = 200.0;
     
     [self setUpNavigationBar];
+    [self setUpMenu];
     [self getTweets];
     
     self.cache = [[NSCache alloc] init];
@@ -56,6 +63,53 @@
             [self.refreshControl endRefreshing];
         }
     }];
+}
+
+- (void)setUpMenu {
+    UIPanGestureRecognizer *panRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(movePanel:)];
+    [panRecognizer setMinimumNumberOfTouches:1];
+    [panRecognizer setMaximumNumberOfTouches:1];
+    [panRecognizer setDelegate:self];
+    
+    [self.view addGestureRecognizer:panRecognizer];
+    
+    CGRect screenRect = [[UIScreen mainScreen] bounds];
+    CGFloat screenHeight = screenRect.size.height;
+
+    self.menuContainerView = [[UIView alloc] initWithFrame:CGRectMake(-kMenuWidth, 0, kMenuWidth, screenHeight)];
+    [self.view addSubview:self.menuContainerView];
+    
+    self.menuViewController = [[MenuViewController alloc] init];
+}
+
+
+- (void)movePanel:(UIPanGestureRecognizer *)sender {
+    CGPoint translatedPoint = [(UIPanGestureRecognizer*)sender translationInView:self.view];
+    CGPoint velocity = [(UIPanGestureRecognizer*)sender velocityInView:[sender view]];
+    
+    if([(UIPanGestureRecognizer*)sender state] == UIGestureRecognizerStateBegan) {
+        if(velocity.x > 0) {
+            self.menuContainerView.frame = CGRectMake(0, self.menuContainerView.frame.origin.y, self.menuContainerView.frame.size.width, self.menuContainerView.frame.size.height);
+
+            [self addChildViewController:self.menuViewController];
+            self.menuViewController.view.frame = self.menuContainerView.bounds;
+            [self.menuContainerView addSubview:self.menuViewController.view];
+            [self.menuViewController didMoveToParentViewController:self];
+        } else {
+            //NSLog(@"pan to left");
+        }
+    }
+    
+    // collapse menu
+    if([(UIPanGestureRecognizer*)sender state] == UIGestureRecognizerStateEnded) {
+        if(velocity.x > 0) {
+            // NSLog(@"gesture went right");
+        } else {
+            self.menuContainerView.frame = CGRectMake(-kMenuWidth, self.menuContainerView.frame.origin.y, self.menuContainerView.frame.size.width, self.menuContainerView.frame.size.height);
+        }
+    }
+    
+    if([(UIPanGestureRecognizer*)sender state] == UIGestureRecognizerStateChanged) {    }
 }
 
 - (void)setUpNavigationBar {
