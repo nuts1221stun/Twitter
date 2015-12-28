@@ -35,6 +35,7 @@ NSString * const UserDidLogoutNotification = @"UserDidLogoutNotification";
 NSString * const kAccessTokenDictionary = @"kAccessTokenDictionary";
 NSString * const kAccessToken = @"kAccessToken";
 NSString * const kAccessTokenSecret = @"kAccessTokenSecret";
+NSString * const kUserId = @"kUserId";
 
 @implementation NSString (NSString_Extended)
 - (NSString *)urlencode {
@@ -271,13 +272,14 @@ NSString * const kAccessTokenSecret = @"kAccessTokenSecret";
                 self.userId = [elts objectAtIndex:1];
             }
             if ([key isEqualToString:@"screen_name"]) {
-                self.userName = [elts objectAtIndex:1];
+                self.userScreenName = [elts objectAtIndex:1];
             }
         }
         
         NSMutableDictionary *accessTokenDictionary = [[NSMutableDictionary alloc] init];
         [accessTokenDictionary setObject:self.authAccessToken forKey:kAccessToken];
         [accessTokenDictionary setObject:self.authAccessTokenSecret forKey:kAccessTokenSecret];
+        [accessTokenDictionary setObject:self.userId forKey:kUserId];
         [self storeAccessToken:accessTokenDictionary];
         
         completionHandler();
@@ -295,6 +297,10 @@ NSString * const kAccessTokenSecret = @"kAccessTokenSecret";
     if (data != nil) {
         NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:data options:0 error:NULL];
         if ([dictionary objectForKey:kAccessToken] != nil && [dictionary objectForKey:kAccessTokenSecret] != nil) {
+            NSString *userId = [dictionary objectForKey:kUserId];
+            if (userId) {
+                self.userId = userId;
+            }
             return dictionary;
         }
     }

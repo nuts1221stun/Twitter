@@ -26,7 +26,7 @@ extern NSString * const UserDidLogoutNotification;
 @property (strong, nonatomic) NSString *authVerifier;
 
 @property (strong, nonatomic) NSString *userId;
-@property (strong, nonatomic) NSString *userName;
+@property (strong, nonatomic) NSString *userScreenName;
 
 
 + (TwitterClient *)sharedInstance;
