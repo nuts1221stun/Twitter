@@ -7,10 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "TweetTableViewController.h"
-#import "MenuViewController.h"
+
 
 @interface MainViewController : UIViewController
 
+- (void)showHomePage;
+- (void)showProfile;
 
 @end

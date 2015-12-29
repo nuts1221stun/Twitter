@@ -7,13 +7,16 @@
 //
 
 #import "MainViewController.h"
-
+#import "MenuViewController.h"
+#import "TweetTableViewController.h"
+#import "ProfileViewController.h"
 
 @interface MainViewController ()
 
 @property (strong, nonatomic) UINavigationController *navigationController;
 @property (strong, nonatomic) TweetTableViewController *tweetTableViewController;
 @property (strong, nonatomic) MenuViewController *menuViewController;
+@property (strong, nonatomic) ProfileViewController *profileViewController;
 
 @end
 
@@ -50,8 +53,8 @@ float const kMenuWidth = 300.0;
     CGFloat screenHeight = screenRect.size.height;
     float navBarHeight = self.navigationController.navigationBar.frame.size.height + 20;
     
-    
     self.menuViewController = [[MenuViewController alloc] init];
+    [self.menuViewController setUpMainViewController:self];
     [self addChildViewController:self.menuViewController];
     self.menuViewController.view.frame = CGRectMake(0, navBarHeight, kMenuWidth, screenHeight - navBarHeight);
     [self.view addSubview:self.menuViewController.view];
@@ -65,7 +68,7 @@ float const kMenuWidth = 300.0;
     CGPoint velocity = [(UIPanGestureRecognizer*)sender velocityInView:[sender view]];
     if([(UIPanGestureRecognizer*)sender state] == UIGestureRecognizerStateBegan) {
         if(velocity.x > 0) {
-            self.navigationController.view.center = CGPointMake(self.navigationController.view.center.x + kMenuWidth, self.navigationController.view.center.y);
+            [self showMenu];
         } else {
             //NSLog(@"pan to left");
         }
@@ -76,13 +79,44 @@ float const kMenuWidth = 300.0;
         if(velocity.x > 0) {
             // NSLog(@"gesture went right");
         } else {
-            //self.view.frame = CGRectMake(0, self.view.frame.origin.y, self.view.frame.size.width, self.view.frame.size.height);
-            self.navigationController.view.center = CGPointMake(self.navigationController.view.center.x - kMenuWidth, self.navigationController.view.center.y);
-            //self.view.center = CGPointMake(self.view.center.x - kMenuWidth, self.view.center.y);
+            [self hideMenu];
         }
     }
     
     if([(UIPanGestureRecognizer*)sender state] == UIGestureRecognizerStateChanged) {    }
+}
+
+- (void)showMenu {
+    if (self.navigationController.view.frame.origin.x < kMenuWidth) {
+        self.navigationController.view.center = CGPointMake(self.navigationController.view.center.x + kMenuWidth, self.navigationController.view.center.y);
+    }
+}
+
+- (void)hideMenu {
+    if (self.navigationController.view.frame.origin.x > 0) {
+        self.navigationController.view.center = CGPointMake(self.navigationController.view.center.x - kMenuWidth, self.navigationController.view.center.y);
+    }
+}
+
+- (void)showHomePage {
+    [self hideMenu];
+    [self.navigationController popToRootViewControllerAnimated:YES];
+}
+
+- (void)showProfile {
+    [self hideMenu];
+    NSArray *viewControllers = [self.navigationController viewControllers];
+    if (self.profileViewController == nil) {
+        self.profileViewController = [[ProfileViewController alloc] init];
+    }
+    
+    for (int i; i < [viewControllers count]; i++) {
+        if ([self.profileViewController isEqual:viewControllers[i]]) {
+            [self.navigationController popToViewController:self.profileViewController animated:YES];
+            return;
+        }
+    }
+    [self.navigationController pushViewController:self.profileViewController animated:YES];
 }
 
 - (void)didReceiveMemoryWarning {

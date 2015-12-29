@@ -13,7 +13,7 @@
 #import "TwitterClient.h"
 #import "User.h"
 #import "Tweet.h"
-#import "MenuViewController.h"
+#import "ProfileViewController.h"
 
 @interface TweetTableViewController () <UITableViewDataSource, UITableViewDelegate, TweetCellDelegate, UIGestureRecognizerDelegate>
 
@@ -118,16 +118,16 @@
         [cell.favoriteButton setImage:[UIImage imageNamed:@"favoriteOn.png"] forState:UIControlStateNormal];
     }
     
-    cell.profileImage.image = nil;
+    [cell.profileButton setBackgroundImage:nil forState:UIControlStateNormal];
     UIImage *profileImage = [self.cache objectForKey:tweet.user.profileImageUrl];
     if (profileImage != nil) {
-        cell.profileImage.image = profileImage;
+        [cell.profileButton setBackgroundImage:profileImage forState:UIControlStateNormal];
     } else {
         NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:tweet.user.profileImageUrl]];
         [request addValue:@"image/*" forHTTPHeaderField:@"Accept"];
         [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
             UIImage *downloadedImage = [UIImage imageWithData:data];
-            cell.profileImage.image = downloadedImage;
+            [cell.profileButton setBackgroundImage:downloadedImage forState:UIControlStateNormal];
             [self.cache setObject:downloadedImage forKey:tweet.user.profileImageUrl];
         }];
     }
@@ -149,6 +149,10 @@
     [self.navigationController pushViewController:tweetVC animated:YES];
 }
 
+- (void)tweetCell:(TweetCell *)cell didClickProfileButton:(BOOL)value {
+    ProfileViewController *profileVC = [[ProfileViewController alloc] init];
+    [self.navigationController pushViewController:profileVC animated:YES];
+}
 - (void)tweetCell:(TweetCell *)cell didClickReplyButton:(BOOL)value {
     NSIndexPath *indexPath = [self.tweetTableView indexPathForCell:cell];
     Tweet *tweet = self.tweets[indexPath.row];

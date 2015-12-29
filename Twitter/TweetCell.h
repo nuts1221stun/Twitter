@@ -12,6 +12,7 @@
 
 @protocol TweetCellDelegate <NSObject>
 
+- (void)tweetCell:(TweetCell *)cell didClickProfileButton:(BOOL)value;
 - (void)tweetCell:(TweetCell *)cell didClickReplyButton:(BOOL)value;
 - (void)tweetCell:(TweetCell *)cell didClickRetweetButton:(BOOL)value;
 - (void)tweetCell:(TweetCell *)cell didClickFavoriteButton:(BOOL)value;
@@ -20,7 +21,7 @@
 
 @interface TweetCell : UITableViewCell
 
-@property (weak, nonatomic) IBOutlet UIImageView *profileImage;
+@property (weak, nonatomic) IBOutlet UIButton *profileButton;
 @property (weak, nonatomic) IBOutlet UILabel *nameLabel;
 @property (weak, nonatomic) IBOutlet UILabel *screenNameLabel;
 @property (weak, nonatomic) IBOutlet UILabel *createdAtLabel;

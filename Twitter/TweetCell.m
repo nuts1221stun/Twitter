@@ -18,6 +18,9 @@
 
     // Configure the view for the selected state
 }
+- (IBAction)onProfileButtonClick:(id)sender {
+    [self.delegate tweetCell:self didClickProfileButton:YES];
+}
 - (IBAction)onReplyButtonClick:(id)sender {
     [self.delegate tweetCell:self didClickReplyButton:YES];
 }
