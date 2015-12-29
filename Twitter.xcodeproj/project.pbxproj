@@ -28,6 +28,7 @@
 		9B19EA2B1BB425510025831D /* ComposeViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9B19EA291BB425510025831D /* ComposeViewController.xib */; };
 		9B6154A51BCCED9500B77319 /* MenuViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B6154A31BCCED9500B77319 /* MenuViewController.m */; };
 		9B6154A61BCCED9500B77319 /* MenuViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9B6154A41BCCED9500B77319 /* MenuViewController.xib */; };
+		9B6A99831C32BA5E00C113D0 /* MainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B6A99821C32BA5E00C113D0 /* MainViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -77,6 +78,8 @@
 		9B6154A21BCCED9500B77319 /* MenuViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MenuViewController.h; sourceTree = "<group>"; };
 		9B6154A31BCCED9500B77319 /* MenuViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MenuViewController.m; sourceTree = "<group>"; };
 		9B6154A41BCCED9500B77319 /* MenuViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MenuViewController.xib; sourceTree = "<group>"; };
+		9B6A99811C32BA5E00C113D0 /* MainViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainViewController.h; sourceTree = "<group>"; };
+		9B6A99821C32BA5E00C113D0 /* MainViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -142,6 +145,8 @@
 				9B6154A21BCCED9500B77319 /* MenuViewController.h */,
 				9B6154A31BCCED9500B77319 /* MenuViewController.m */,
 				9B6154A41BCCED9500B77319 /* MenuViewController.xib */,
+				9B6A99811C32BA5E00C113D0 /* MainViewController.h */,
+				9B6A99821C32BA5E00C113D0 /* MainViewController.m */,
 			);
 			path = Twitter;
 			sourceTree = "<group>";
@@ -296,6 +301,7 @@
 				9B19EA191BAD99250025831D /* TweetTableViewController.m in Sources */,
 				9B19E9FA1BAC57460025831D /* Base64Transcoder.c in Sources */,
 				9B19EA071BAD8BFA0025831D /* LoginViewController.m in Sources */,
+				9B6A99831C32BA5E00C113D0 /* MainViewController.m in Sources */,
 				9B19EA251BB40BFD0025831D /* TweetViewController.m in Sources */,
 				9B19EA0F1BAD96790025831D /* User.m in Sources */,
 				9B19EA1C1BADAEE20025831D /* TwitterClient.m in Sources */,

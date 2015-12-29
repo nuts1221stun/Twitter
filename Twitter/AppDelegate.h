@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "LoginViewController.h"
-#import "TweetTableViewController.h"
+#import "MainViewController.h"
 
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
@@ -16,7 +16,7 @@
 @property (strong, nonatomic) UIWindow *window;
 @property (strong, nonatomic) UINavigationController *navigationController;
 @property (strong, nonatomic) LoginViewController *loginViewController;
-@property (strong, nonatomic) TweetTableViewController *tweetViewController;
+@property (strong, nonatomic) MainViewController *mainViewController;
 
 @end
 
