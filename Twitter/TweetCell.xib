@@ -15,7 +15,7 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="screen name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HNt-3M-s4g">
-                        <rect key="frame" x="64" y="45" width="240" height="16"/>
+                        <rect key="frame" x="64" y="40" width="240" height="16"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="16" id="NKs-l8-hTf"/>
                         </constraints>
@@ -30,7 +30,7 @@
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Zeh-j2-kE5">
-                        <rect key="frame" x="64" y="69" width="248" height="16"/>
+                        <rect key="frame" x="64" y="64" width="248" height="21"/>
                         <constraints>
                             <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="10" id="ptl-nu-ikQ"/>
                         </constraints>
@@ -130,9 +130,10 @@
                     <constraint firstItem="sV1-gN-Csq" firstAttribute="leading" secondItem="coi-NT-6ZL" secondAttribute="trailing" constant="16" id="GO6-G3-f2n"/>
                     <constraint firstItem="OAU-mp-Dgr" firstAttribute="leading" secondItem="4uY-eS-CUB" secondAttribute="trailing" id="HLd-7G-0Gt"/>
                     <constraint firstItem="sV1-gN-Csq" firstAttribute="top" secondItem="coi-NT-6ZL" secondAttribute="top" id="HaZ-9d-vI8"/>
+                    <constraint firstItem="HNt-3M-s4g" firstAttribute="bottom" secondItem="coi-NT-6ZL" secondAttribute="bottom" id="J0N-bK-YPU"/>
                     <constraint firstItem="Ea0-9W-Q6S" firstAttribute="top" secondItem="sV1-gN-Csq" secondAttribute="top" id="Mu4-g5-6cm"/>
                     <constraint firstItem="lKI-Q5-Qka" firstAttribute="centerY" secondItem="pPG-eA-KTe" secondAttribute="centerY" id="Pmz-OX-aA6"/>
-                    <constraint firstItem="HNt-3M-s4g" firstAttribute="top" secondItem="sV1-gN-Csq" secondAttribute="bottom" constant="8" id="ROh-Rf-I2v"/>
+                    <constraint firstItem="HNt-3M-s4g" firstAttribute="top" secondItem="sV1-gN-Csq" secondAttribute="bottom" constant="6" id="ROh-Rf-I2v"/>
                     <constraint firstItem="Ea0-9W-Q6S" firstAttribute="leading" secondItem="sV1-gN-Csq" secondAttribute="trailing" constant="16" id="YdA-RD-c0P"/>
                     <constraint firstAttribute="bottomMargin" secondItem="zGu-EP-iXS" secondAttribute="bottom" constant="2" id="c3t-dF-21b"/>
                     <constraint firstItem="lKI-Q5-Qka" firstAttribute="centerY" secondItem="4uY-eS-CUB" secondAttribute="centerY" id="cSX-u2-kst"/>
@@ -155,6 +156,7 @@
                 <variation key="default">
                     <mask key="constraints">
                         <exclude reference="69S-Rk-Yi8"/>
+                        <exclude reference="ROh-Rf-I2v"/>
                         <exclude reference="n7Z-Oc-5oh"/>
                         <exclude reference="ckP-Fb-zTW"/>
                         <exclude reference="c3t-dF-21b"/>

@@ -7,27 +7,37 @@
 //
 
 #import "ProfileViewController.h"
-#import "User.h"
 
 @interface ProfileViewController ()
+
+@property (strong, nonatomic) User *user;
 
 @end
 
 @implementation ProfileViewController
 
+- (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil user:(User *)user {
+    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    self.user = user;
+    
+    return self;
+}
+
+- (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
+    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    return self;
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
-    self.nameLabel.text = [User currentUser].name;
-    self.screenNameLabel.text = [User currentUser].screenName;
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:[User currentUser].profileImageUrl]];
+    self.nameLabel.text = self.user.name;
+    self.screenNameLabel.text =  [NSString stringWithFormat:@"@%@", self.user.screenName];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:self.user.profileImageUrl]];
     [request addValue:@"image/*" forHTTPHeaderField:@"Accept"];
     [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
         UIImage *downloadedImage = [UIImage imageWithData:data];
         self.profileImage.image = downloadedImage;
     }];
-
-
 }
 
 - (void)didReceiveMemoryWarning {

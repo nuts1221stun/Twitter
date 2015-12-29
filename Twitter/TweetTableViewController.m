@@ -150,7 +150,9 @@
 }
 
 - (void)tweetCell:(TweetCell *)cell didClickProfileButton:(BOOL)value {
-    ProfileViewController *profileVC = [[ProfileViewController alloc] init];
+    NSIndexPath *indexPath = [self.tweetTableView indexPathForCell:cell];
+    Tweet *tweet = self.tweets[indexPath.row];
+    ProfileViewController *profileVC = [[ProfileViewController alloc] initWithNibName:@"ProfileViewController" bundle:nil user:tweet.user];
     [self.navigationController pushViewController:profileVC animated:YES];
 }
 - (void)tweetCell:(TweetCell *)cell didClickReplyButton:(BOOL)value {

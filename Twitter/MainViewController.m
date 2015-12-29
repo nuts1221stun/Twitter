@@ -10,6 +10,7 @@
 #import "MenuViewController.h"
 #import "TweetTableViewController.h"
 #import "ProfileViewController.h"
+#import "User.h"
 
 @interface MainViewController ()
 
@@ -107,7 +108,7 @@ float const kMenuWidth = 300.0;
     [self hideMenu];
     NSArray *viewControllers = [self.navigationController viewControllers];
     if (self.profileViewController == nil) {
-        self.profileViewController = [[ProfileViewController alloc] init];
+        self.profileViewController = [[ProfileViewController alloc] initWithNibName:@"ProfileViewController" bundle:nil user:[User currentUser]];
     }
     
     for (int i; i < [viewControllers count]; i++) {

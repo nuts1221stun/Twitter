@@ -39,7 +39,7 @@
     ];
     
     self.nameLabel.text = [User currentUser].name;
-    self.screenNameLabel.text = [User currentUser].screenName;
+    self.screenNameLabel.text = [NSString stringWithFormat:@"@%@", [User currentUser].screenName];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:[User currentUser].profileImageUrl]];
     [request addValue:@"image/*" forHTTPHeaderField:@"Accept"];
     [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
