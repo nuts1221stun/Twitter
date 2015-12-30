@@ -32,11 +32,21 @@
     [super viewDidLoad];
     self.nameLabel.text = self.user.name;
     self.screenNameLabel.text =  [NSString stringWithFormat:@"@%@", self.user.screenName];
+    self.tweetsCountLabel.text = [NSString stringWithFormat:@"%lu", self.user.tweetsCount];
+    self.followingCountLabel.text = [NSString stringWithFormat:@"%lu", self.user.followingCount];
+    self.followersCountLabel.text = [NSString stringWithFormat:@"%lu", self.user.followersCount];
+    
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:self.user.profileImageUrl]];
     [request addValue:@"image/*" forHTTPHeaderField:@"Accept"];
     [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
         UIImage *downloadedImage = [UIImage imageWithData:data];
         self.profileImage.image = downloadedImage;
+    }];
+    request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:self.user.profileBackgroundImageUrl]];
+    [request addValue:@"image/*" forHTTPHeaderField:@"Accept"];
+    [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
+        UIImage *downloadedImage = [UIImage imageWithData:data];
+        self.profileBackgroundImage.image = downloadedImage;
     }];
 }
 

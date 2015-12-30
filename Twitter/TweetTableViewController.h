@@ -7,7 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "MainViewController.h"
 
 @interface TweetTableViewController : UIViewController
+
+@property (weak, nonatomic) MainViewController *mainViewController;
 
 @end

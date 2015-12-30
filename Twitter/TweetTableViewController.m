@@ -15,6 +15,7 @@
 #import "Tweet.h"
 #import "ProfileViewController.h"
 
+
 @interface TweetTableViewController () <UITableViewDataSource, UITableViewDelegate, TweetCellDelegate, UIGestureRecognizerDelegate>
 
 @property (strong, nonatomic) TwitterClient *twitterClient;
@@ -23,6 +24,7 @@
 @property (strong, nonatomic) NSCache *cache;
 
 @property (weak, nonatomic) IBOutlet UITableView *tweetTableView;
+
 
 @end
 
@@ -60,18 +62,18 @@
 }
 
 - (void)setUpNavigationBar {
-    UIBarButtonItem *logoutButton = [[UIBarButtonItem alloc] initWithTitle:@"Logout" style:UIBarButtonItemStylePlain target:self action:@selector(onLogoutButtonClick:)];
-    self.navigationItem.leftBarButtonItem = logoutButton;
+    UIBarButtonItem *menuButton = [[UIBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStylePlain target:self action:@selector(onMenuButtonClick:)];
+    [menuButton setImage:[UIImage imageNamed:@"menu.png"]];
+    self.navigationItem.leftBarButtonItem = menuButton;
     [self.navigationItem setHidesBackButton:YES animated:YES];
     
     UIBarButtonItem *tweetButton = [[UIBarButtonItem alloc] initWithTitle:@"Tweet" style:UIBarButtonItemStylePlain target:self action:@selector(onTweetButtonClick:)];
     self.navigationItem.rightBarButtonItem = tweetButton;
 }
 
-- (void)onLogoutButtonClick:(id)sender {
-    [self.twitterClient logout];
+- (void)onMenuButtonClick:(id)sender {
+    [self.mainViewController toggleMenu];
 }
-
 - (void)onTweetButtonClick:(id)sender {
     ComposeViewController *composeVC = [[ComposeViewController alloc] initWithNibNameAsTweetState:@"ComposeViewController" bundle:nil];
     [self.navigationController pushViewController:composeVC animated:YES];

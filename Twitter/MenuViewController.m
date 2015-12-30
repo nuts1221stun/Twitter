@@ -35,7 +35,8 @@
     self.menuItems = @[
         @"home",
         @"profile",
-        @"mentions"
+        @"mentions",
+        @"logout"
     ];
     
     self.nameLabel.text = [User currentUser].name;
@@ -77,6 +78,9 @@
     }
     if (indexPath.row == 1) {
         [self.mainVC showProfile];
+    }
+    if (indexPath.row == 3) {
+        [[TwitterClient sharedInstance] logout];
     }
     // [self.navigationController pushViewController:tweetVC animated:YES];
 }

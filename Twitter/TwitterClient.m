@@ -88,6 +88,15 @@ NSString * const kUserId = @"kUserId";
     [User setCurrentUser:nil];
     [self removeAccessToken];
     [[NSNotificationCenter defaultCenter] postNotificationName:UserDidLogoutNotification object:nil];
+    
+    self.authToken = nil;
+    self.authTokenSecret = nil;
+    self.authAccessToken = nil;
+    self.authAccessTokenSecret = nil;
+    self.authData = nil;
+    self.authDataDictionary = nil;
+    self.authDataName = nil;
+    self.authVerifier = nil;
 }
 
 - (void)openUrl:(NSURL *)url {

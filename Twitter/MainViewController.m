@@ -36,11 +36,13 @@ float const kMenuWidth = 300.0;
     self.navigationController = [[UINavigationController alloc] initWithRootViewController:self.tweetTableViewController];
     self.navigationController.navigationBar.barTintColor = [UIColor colorWithRed:0.0 green:0.6745098 blue:0.9294118 alpha:1.0];
     self.navigationController.navigationBar.tintColor = [UIColor whiteColor];
+    self.navigationController.navigationBar.translucent = NO;
 
     [self addChildViewController:self.navigationController];
     self.tweetTableViewController.view.frame = self.view.bounds;
     [self.view addSubview:self.navigationController.view];
     [self.navigationController didMoveToParentViewController:self];
+    self.tweetTableViewController.mainViewController = self;
 }
 
 - (void)setUpMenu {
@@ -85,6 +87,14 @@ float const kMenuWidth = 300.0;
     }
     
     if([(UIPanGestureRecognizer*)sender state] == UIGestureRecognizerStateChanged) {    }
+}
+
+- (void)toggleMenu {
+    if (self.navigationController.view.frame.origin.x < kMenuWidth) {
+        self.navigationController.view.center = CGPointMake(self.navigationController.view.center.x + kMenuWidth, self.navigationController.view.center.y);
+    } else if (self.navigationController.view.frame.origin.x > 0) {
+        self.navigationController.view.center = CGPointMake(self.navigationController.view.center.x - kMenuWidth, self.navigationController.view.center.y);
+    }
 }
 
 - (void)showMenu {

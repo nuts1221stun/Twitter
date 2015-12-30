@@ -11,6 +11,9 @@
 
 @interface MainViewController : UIViewController
 
+- (void)toggleMenu;
+- (void)showMenu;
+- (void)hideMenu;
 - (void)showHomePage;
 - (void)showProfile;
 
